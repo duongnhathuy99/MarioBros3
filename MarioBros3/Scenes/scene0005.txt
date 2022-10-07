@@ -43,3 +43,5 @@ Assets\brick.txt
 #Portal 
 50	200	160	216	180	1
 
+[MAP]
+30	Assets/Map1.txt	42	176	11	11	16	16	0

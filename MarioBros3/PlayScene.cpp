@@ -9,6 +9,7 @@
 #include "Portal.h"
 #include "Coin.h"
 #include "Platform.h"
+#include "Map.h"
 
 #include "SampleKeyEventHandler.h"
 
@@ -25,13 +26,14 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 #define SCENE_SECTION_UNKNOWN -1
 #define SCENE_SECTION_ASSETS	1
 #define SCENE_SECTION_OBJECTS	2
+#define SCENE_SECTION_MAP	3
 
 #define ASSETS_SECTION_UNKNOWN -1
 #define ASSETS_SECTION_SPRITES 1
 #define ASSETS_SECTION_ANIMATIONS 2
 
 #define MAX_SCENE_LINE 1024
-
+Map* map;
 void CPlayScene::_ParseSection_SPRITES(string line)
 {
 	vector<string> tokens = split(line);
@@ -160,7 +162,21 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	objects.push_back(obj);
 }
+void CPlayScene::_ParseSection_MAP(string line) {
+	vector<string> tokens = split(line);
+	if (tokens.size() < 8) return;
+	int IDtex = atoi(tokens[0].c_str());
+	wstring mapPath = ToWSTR(tokens[1]);
+	int mapRow = atoi(tokens[2].c_str());
+	int mapColumn = atoi(tokens[3].c_str());
+	int tileRow = atoi(tokens[4].c_str());
+	int tileColumn = atoi(tokens[5].c_str());
+	int tileWidth = atoi(tokens[6].c_str());
+	int tileHeight = atoi(tokens[7].c_str());
 
+	map = new Map(IDtex, mapPath.c_str(), mapRow, mapColumn, tileRow, tileColumn, tileWidth, tileHeight);
+	DebugOut(L"[INFO] Done loading map from %s\n", mapPath.c_str());
+}
 void CPlayScene::LoadAssets(LPCWSTR assetFile)
 {
 	DebugOut(L"[INFO] Start loading assets from : %s \n", assetFile);
@@ -214,6 +230,7 @@ void CPlayScene::Load()
 		if (line[0] == '#') continue;	// skip comment lines	
 		if (line == "[ASSETS]") { section = SCENE_SECTION_ASSETS; continue; };
 		if (line == "[OBJECTS]") { section = SCENE_SECTION_OBJECTS; continue; };
+		if (line == "[MAP]") { section = SCENE_SECTION_MAP; continue; }
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }	
 
 		//
@@ -223,6 +240,7 @@ void CPlayScene::Load()
 		{ 
 			case SCENE_SECTION_ASSETS: _ParseSection_ASSETS(line); break;
 			case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
+			case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
 		}
 	}
 
@@ -267,6 +285,7 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
+	map->Draw();
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
 }
