@@ -6,10 +6,10 @@ height	240
 #id	type	file
 # type: 0: intro, 1: play scene 
 [SCENES]
-0	intro.txt
-1	scene01.txt
-2	scene02.txt
-5	scene0005.txt
+0	Scenes\intro.txt
+1	Scenes\scene01.txt
+2	Scenes\scene02.txt
+5	Scenes\scene0005.txt
 
 # id	file 
 [TEXTURES]
