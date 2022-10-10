@@ -2,6 +2,7 @@
 [ASSETS]
 Assets\mario.txt
 Assets\brick.txt
+Assets\questionBrick.txt
 Assets\coin.txt
 Assets\goomba.txt
 Assets\cloud.txt

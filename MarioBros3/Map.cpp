@@ -74,7 +74,7 @@ void Map::Draw()
 	firstrow = (int)y / Tile_Width;
 	if (firstrow < 0) { firstrow = 0; }
 	lastrow = ((int)y + cgame->GetBackBufferHeight()) / Tile_Width + 1;
-	DebugOut(L"fcol:%d   lcol:%d\n", firstrow, lastrow);
+	//DebugOut(L"fcol:%d   lcol:%d\n", firstrow, lastrow);
 	for (int i = firstrow; i <= lastrow; i++)
 	{
 		for (int j = firstcol; j <= lastcol; j++)
