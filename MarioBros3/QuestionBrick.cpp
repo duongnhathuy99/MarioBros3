@@ -4,10 +4,14 @@ void CQuestionBrick::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	if(questionBrick_unbox)
+	{
 		animations->Get(ID_ANI_BRICK_UNBOX)->Render(x, y);
+		coin->Render();
+	}
 	else
 		animations->Get(ID_ANI_BRICK_ITEM)->Render(x, y);
 	RenderBoundingBox();
+	
 }
 
 void CQuestionBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -26,11 +30,13 @@ void CQuestionBrick::SetState(int state) {
 		vy = 0;
 		break;
 	case QUESTION_BRICK_STATE_MOVEUP:
-		vy = -QUESTION_BRICK_VY;
+		vy = -SPEED_QUESTION_BRICK;
 		questionBrick_unbox = true;
+		coin= new CCoin(x, y - BRICK_BBOX_HEIGHT);
+		coin->SetState(COIN_STATE_MOVEUP);
 		break;
 	case QUESTION_BRICK_STATE_MOVEDOWN:
-		vy = QUESTION_BRICK_VY;
+		vy = SPEED_QUESTION_BRICK;
 		break;
 	case QUESTION_BRICK_STATE_UNBOX:
 		y = startY;
@@ -48,6 +54,9 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects ) {
 	}
 	if (vy > 0 && y >= startY) {
 		SetState(QUESTION_BRICK_STATE_UNBOX);
+	}
+	if (state!= QUESTION_BRICK_STATE_ITEM) {
+		coin->Update(dt);
 	}
 	y += vy * dt;
 	CGameObject::Update(dt, coObjects);

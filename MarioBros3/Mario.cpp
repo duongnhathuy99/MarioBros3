@@ -28,6 +28,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	isOnPlatform = false;
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	DebugOutTitle(L"SizeObject: %d", coObjects->size());
 }
 
 void CMario::OnNoCollision(DWORD dt)
@@ -255,7 +256,7 @@ void CMario::Render()
 
 	RenderBoundingBox();
 	
-	DebugOutTitle(L"Coins: %d", coin);
+	//DebugOutTitle(L"Coins: %d", coin);
 }
 
 void CMario::SetState(int state)
