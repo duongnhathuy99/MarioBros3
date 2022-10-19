@@ -7,7 +7,7 @@ void CCoin::Render()
 		animations->Get(ID_ANI_COIN)->Render(x, y);
 	//RenderBoundingBox();
 }
-void CCoin::Update(DWORD dt)
+void CCoin::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects )
 {
 	if (startY - y > DISTANCE_COIN_MOVEUP)
 	{

@@ -8,6 +8,7 @@
 #include "Coin.h"
 #include "Portal.h"
 #include "QuestionBrick.h"
+#include "Mushroom.h"
 
 #include "Collision.h"
 
@@ -58,6 +59,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithPortal(e);
 	else if (dynamic_cast<CQuestionBrick*>(e->obj))
 		OnCollisionWithQuestionBrick(e);
+	else if (dynamic_cast<CMushroom*>(e->obj))
+		OnCollisionWithMushroom(e);
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -116,6 +119,12 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 			quesBrick->SetState(QUESTION_BRICK_STATE_MOVEUP);
 		}
 	}
+}
+void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
+{
+	e->obj->Delete();
+	if (MARIO_LEVEL_SMALL)
+		SetLevel(MARIO_LEVEL_BIG);
 }
 //
 // Get animation ID for small Mario
