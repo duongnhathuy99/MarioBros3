@@ -8,7 +8,7 @@
 
 #define ID_ANI_BRICK_ITEM 6000
 #define ID_ANI_BRICK_UNBOX 6001
-#define BRICK_BBOX 15
+#define BRICK_BBOX 16
 //#define BRICK_BBOX_WIDTH 15
 //#define BRICK_BBOX_HEIGHT 15
 

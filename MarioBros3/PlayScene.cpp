@@ -13,6 +13,7 @@
 #include "QuestionBrick.h"
 #include "Mushroom.h"
 #include "SemisolidPlatform.h"
+#include "Pipe.h"
 #include "SampleKeyEventHandler.h"
 
 using namespace std;
@@ -156,6 +157,18 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CSemisolidPlatform(x, y, cell_width, cell_height, length);
 		break;
 	}
+	case OBJECT_TYPE_PIPE:
+	{
+		float cellWidth = (float)atof(tokens[3].c_str());
+		float cellHeight = (float)atof(tokens[4].c_str());
+		int height = atof(tokens[5].c_str());
+		int spriteId_top_left = atof(tokens[6].c_str());
+		int spriteId_top_right = atof(tokens[7].c_str());
+		int	spriteId_bot_left = atof(tokens[8].c_str());
+		int spriteId_bot_right = atof(tokens[9].c_str());
+		obj = new CPipe(x, y, cellWidth, cellHeight, height, spriteId_top_left, spriteId_top_right, spriteId_bot_left, spriteId_bot_right);
+		break;
+	}
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = (float)atof(tokens[3].c_str());
@@ -270,7 +283,7 @@ void CPlayScene::Update(DWORD dt)
 	// TO-DO: This is a "dirty" way, need a more organized way 
 
 	vector<LPGAMEOBJECT> coObjects;
-	for (size_t i = 0; i < objects.size(); i++)
+	for (size_t i = 1; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
 	}
