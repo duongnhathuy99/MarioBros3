@@ -200,6 +200,13 @@ void CCollision::Filter( LPGAMEOBJECT objSrc,
 		{
 			continue;
 		}
+		int l, t, r, b;
+		c->obj->DirectBlocking(l, t, r, b);
+		
+		if (c->nx < 0 && !l)continue;
+		if (c->nx > 0 && !r)continue;
+		if (c->ny < 0 && !t)continue;
+		if (c->ny > 0 && !b)continue;
 
 		if (c->t < min_tx && c->nx != 0 && filterX == 1) {
 			min_tx = c->t; min_ix = i;

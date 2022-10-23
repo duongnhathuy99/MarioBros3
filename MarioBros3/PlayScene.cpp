@@ -12,6 +12,7 @@
 #include "Map.h"
 #include "QuestionBrick.h"
 #include "Mushroom.h"
+#include "SemisolidPlatform.h"
 #include "SampleKeyEventHandler.h"
 
 using namespace std;
@@ -147,7 +148,14 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 		break;
 	}
-
+	case OBJECT_TYPE_SEMISOLID_PLATFORM:
+	{
+		float cell_width = (float)atof(tokens[3].c_str());
+		float cell_height = (float)atof(tokens[4].c_str());
+		int length = atoi(tokens[5].c_str());
+		obj = new CSemisolidPlatform(x, y, cell_width, cell_height, length);
+		break;
+	}
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = (float)atof(tokens[3].c_str());
@@ -262,7 +270,7 @@ void CPlayScene::Update(DWORD dt)
 	// TO-DO: This is a "dirty" way, need a more organized way 
 
 	vector<LPGAMEOBJECT> coObjects;
-	for (size_t i = 1; i < objects.size(); i++)
+	for (size_t i = 0; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
 	}
