@@ -161,11 +161,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		float cellWidth = (float)atof(tokens[3].c_str());
 		float cellHeight = (float)atof(tokens[4].c_str());
-		int height = atof(tokens[5].c_str());
-		int spriteId_top_left = atof(tokens[6].c_str());
-		int spriteId_top_right = atof(tokens[7].c_str());
-		int	spriteId_bot_left = atof(tokens[8].c_str());
-		int spriteId_bot_right = atof(tokens[9].c_str());
+		int height = atoi(tokens[5].c_str());
+		int spriteId_top_left = atoi(tokens[6].c_str());
+		int spriteId_top_right = atoi(tokens[7].c_str());
+		int	spriteId_bot_left = atoi(tokens[8].c_str());
+		int spriteId_bot_right = atoi(tokens[9].c_str());
 		obj = new CPipe(x, y, cellWidth, cellHeight, height, spriteId_top_left, spriteId_top_right, spriteId_bot_left, spriteId_bot_right);
 		break;
 	}

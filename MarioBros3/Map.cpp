@@ -80,7 +80,7 @@ void Map::Draw()
 		for (int j = firstcol; j <= lastcol; j++)
 		{
 			if (tilemap[i][j])
-				sprites->Get(tilemap[i][j] + Id)->Draw(Tile_Width * j, Tile_Height * i);
+				sprites->Get(tilemap[i][j] + Id)->Draw((float)Tile_Width * j, (float)Tile_Height * i);
 		}
 	}
 }
