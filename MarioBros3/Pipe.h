@@ -25,5 +25,6 @@ public:
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 	void RenderBoundingBox();
 	int IsBlocking() { return 1; }
+	int IsCollidable() { return 1; };
 };
 

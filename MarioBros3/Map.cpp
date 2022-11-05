@@ -70,17 +70,17 @@ void Map::Draw()
 	cgame->GetCamPos(x, y);
 	firstcol = (int)x / Tile_Width;
 	if (firstcol < 0) { firstcol = 0; }
-	lastcol = ((int)x + cgame->GetBackBufferWidth()) / Tile_Width + 1;
+	lastcol = ((int)x + cgame->GetBackBufferWidth()) / Tile_Width ;
 	firstrow = (int)y / Tile_Width;
 	if (firstrow < 0) { firstrow = 0; }
-	lastrow = ((int)y + cgame->GetBackBufferHeight()) / Tile_Width + 1;
+	lastrow = ((int)y + cgame->GetBackBufferHeight()) / Tile_Width ;
 	//DebugOut(L"fcol:%d   lcol:%d\n", firstrow, lastrow);
 	for (int i = firstrow; i <= lastrow; i++)
 	{
 		for (int j = firstcol; j <= lastcol; j++)
 		{
 			if (tilemap[i][j])
-				sprites->Get(tilemap[i][j] + Id)->Draw((float)Tile_Width * j, (float)Tile_Height * i);
+				sprites->Get(tilemap[i][j] + Id)->Draw(8+(float)Tile_Width * j, 8+(float)Tile_Height * i);
 		}
 	}
 }

@@ -14,6 +14,7 @@
 #include "Mushroom.h"
 #include "SemisolidPlatform.h"
 #include "Pipe.h"
+#include "PiranhaPlant.h"
 #include "SampleKeyEventHandler.h"
 
 using namespace std;
@@ -103,8 +104,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	if (tokens.size() < 2) return;
 
 	int object_type = atoi(tokens[0].c_str());
-	float x = (float)atof(tokens[1].c_str());
-	float y = (float)atof(tokens[2].c_str());
+	float x = (float)atof(tokens[1].c_str())+8;
+	float y = (float)atof(tokens[2].c_str())+8;
 
 	CGameObject *obj = NULL;
 
@@ -157,6 +158,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CSemisolidPlatform(x, y, cell_width, cell_height, length);
 		break;
 	}
+	case OBJECT_TYPE_PIRANHA:
+	{
+		int stem = atoi(tokens[3].c_str());
+		obj = new CPiranhaPlant(x, y, stem);
+		break;
+	}
 	case OBJECT_TYPE_PIPE:
 	{
 		float cellWidth = (float)atof(tokens[3].c_str());
@@ -169,6 +176,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CPipe(x, y, cellWidth, cellHeight, height, spriteId_top_left, spriteId_top_right, spriteId_bot_left, spriteId_bot_right);
 		break;
 	}
+	
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = (float)atof(tokens[3].c_str());
