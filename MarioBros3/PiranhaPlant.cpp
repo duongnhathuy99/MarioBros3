@@ -1,13 +1,13 @@
 #include "PiranhaPlant.h"
 #include "Textures.h"
-#include "Pipe.h"
 #include "debug.h"
 
-CPiranhaPlant::CPiranhaPlant(float x, float y,int Stem) :CGameObject(x, y)
+CPiranhaPlant::CPiranhaPlant(float x, float y,int Stem,int Color) :CGameObject(x, y)
 {
 	timestop_start = 0;
 	startY = y;
 	stem = Stem;
+	color = Color;
 	SetState(STATE_PRIRANHA_UP);
 }
 
@@ -28,7 +28,6 @@ void CPiranhaPlant::OnNoCollision(DWORD dt)
 void CPiranhaPlant::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (!e->obj->IsBlocking()) return;
-
 }
 void CPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -50,7 +49,6 @@ void CPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		y = startY;
 		SetState(STATE_PRIRANHA_STOP);
 	}
-	//DebugOutTitle(L"timestop: %d   vy:%f   y:%f", timestop_start, vy,y);
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
@@ -79,10 +77,11 @@ void CPiranhaPlant::RenderBoundingBox()
 }
 void CPiranhaPlant::Render()
 {
-	
-	for(int i=0;i<=stem;i++)
+	int ani = ID_ANI_PRIRANHA_GREEN_UP + color;
+	for(int i=1;i<=stem;i++)
 	CAnimations::GetInstance()->Get(ID_ANI_STEM)->Render(x, y+i*STEM_BBOX_HEIGHT+ STEM_BBOX_HEIGHT/2);
-	CAnimations::GetInstance()->Get(ID_ANI_PRIRANHA_GREEN_UP)->Render(x, y);
+	CAnimations::GetInstance()->Get(ani)->Render(x, y);
+	
 	RenderBoundingBox();
 }
 
@@ -104,6 +103,5 @@ void CPiranhaPlant::SetState(int state)
 		vy = PIRANHA_SPEED;
 		timestop_start = 0;
 		break;
-	
 	}
 }

@@ -11,26 +11,23 @@
 #define STATE_PRIRANHA_UP 100
 #define STATE_PRIRANHA_STOP 200
 #define STATE_PRIRANHA_DOWN 300
-//#define STATE_PRIRANHA_GREEN_DOWN_LEFT 200
-//#define STATE_PRIRANHA_GREEN_UP_LEFT 300
 
 #define ID_ANI_STEM 8000
 #define ID_ANI_PRIRANHA_GREEN_UP 8001
-#define ID_ANI_PRIRANHA_GREEN_DOWN_LEFT 8002
-#define ID_ANI_PRIRANHA_GREEN_UP_LEFT 8003
 
 class CPiranhaPlant : public CGameObject
 {
+protected:
 	float ax;
 	float ay;
-	int stem;
+	int stem, color;
 	float startY;
 	ULONGLONG timestop_start;
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void RenderBoundingBox();
-	void Render();
+	virtual void Render();
 
 	int IsCollidable() { return 1; };
 	int IsBlocking() { return 0; }
@@ -39,7 +36,7 @@ class CPiranhaPlant : public CGameObject
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 
 public:
-	CPiranhaPlant(float x, float y,int stem);
+	CPiranhaPlant(float x, float y, int stem, int Color);
 	virtual void SetState(int state);
 };
 

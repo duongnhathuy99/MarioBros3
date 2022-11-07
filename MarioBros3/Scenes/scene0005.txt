@@ -54,7 +54,11 @@ Assets\piranhaPlant.txt
 #7	250	50
 
 #Piranha Plant
-10	360	369	2
+10	336	369	2	0
+10	320	369	2	1
+#Fire Piranha Plant
+11	360	369	2	0
+11	384	369	2	1
 #Pipe
 9	352	368	16	16	4	37	38	39	40
 

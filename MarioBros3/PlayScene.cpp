@@ -15,6 +15,7 @@
 #include "SemisolidPlatform.h"
 #include "Pipe.h"
 #include "PiranhaPlant.h"
+#include "FirePiranhaPlant.h"
 #include "SampleKeyEventHandler.h"
 
 using namespace std;
@@ -161,7 +162,15 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_PIRANHA:
 	{
 		int stem = atoi(tokens[3].c_str());
-		obj = new CPiranhaPlant(x, y, stem);
+		int color = atoi(tokens[4].c_str());
+		obj = new CPiranhaPlant(x, y, stem, color);
+		break;
+	}
+	case OBJECT_TYPE_FIRE_PIRANHA:
+	{
+		int stem = atoi(tokens[3].c_str());
+		int color = atoi(tokens[4].c_str());
+		obj = new CFirePiranhaPlant(x, y, stem, color);
 		break;
 	}
 	case OBJECT_TYPE_PIPE:
