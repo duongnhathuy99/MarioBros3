@@ -39,11 +39,11 @@ Assets\piranhaPlant.txt
 #Brick
 1	390	120
 #Goomba
-2	550	200
-2	600	200
+#2	550	200
+#2	600	200
 #Koopa
-3	580	200
-3	610	200
+3	550	200
+#3	500	200
 #QuestionBrick
 6	112	352	1
 6	128	352	1
