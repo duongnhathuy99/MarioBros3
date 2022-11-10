@@ -281,11 +281,13 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 				if (colX_other != NULL)
 				{
 					x += colX_other->t * dx +colX_other->nx * BLOCK_PUSH_FACTOR;
+					objSrc->SetPosition(x, y);
 					objSrc->OnCollisionWith(colX_other);
 				}
 				else
 				{
 					x += dx;
+					objSrc->SetPosition(x, y);
 				}
 			}
 			else // collision on X first
@@ -314,11 +316,13 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 				if (colY_other != NULL)
 				{
 					y += colY_other->t * dy + colY_other->ny * BLOCK_PUSH_FACTOR;
+					objSrc->SetPosition(x, y);
 					objSrc->OnCollisionWith(colY_other);
 				}
 				else
 				{
 					y += dy;
+					objSrc->SetPosition(x, y);
 				}
 			}
 		}
@@ -327,6 +331,7 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 		{
 			x += colX->t * dx + colX->nx * BLOCK_PUSH_FACTOR;
 			y += dy;
+			objSrc->SetPosition(x, y);
 			objSrc->OnCollisionWith(colX);
 		}
 		else 
@@ -334,15 +339,17 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 			{
 				x += dx;
 				y += colY->t * dy + colY->ny * BLOCK_PUSH_FACTOR;
+				objSrc->SetPosition(x, y);
 				objSrc->OnCollisionWith(colY);
 			}
 			else // both colX & colY are NULL 
 			{
 				x += dx;
 				y += dy;
+				objSrc->SetPosition(x, y);
 			}
 
-		objSrc->SetPosition(x, y);
+		//objSrc->SetPosition(x, y);
 	}
 
 	//

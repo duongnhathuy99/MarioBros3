@@ -1,4 +1,6 @@
 #include "Koopa.h"
+#include "debug.h"
+#include "SemisolidPlatform.h"
 
 CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
 {
@@ -35,7 +37,6 @@ void CKoopa::OnNoCollision(DWORD dt)
 void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (!e->obj->IsBlocking()) return;
-	if (dynamic_cast<CKoopa*>(e->obj)) return;
 
 	if (e->ny != 0)
 	{
@@ -44,6 +45,24 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	else if (e->nx != 0)
 	{
 		vx = -vx;
+	}
+	if (dynamic_cast<CSemisolidPlatform*>(e->obj) )
+	{
+		if ((e->ny < 0) && state == KOOPA_STATE_WALKING)
+		{
+			float l, t, r, b ;
+			e->obj->GetBoundingBox(l, t, r, b);
+			if (x < l)
+			{
+				x = l;
+				vx = -vx;
+			}
+			if (x > r)
+			{
+				x = r;
+				vx = -vx;
+			}
+		}
 	}
 }
 
