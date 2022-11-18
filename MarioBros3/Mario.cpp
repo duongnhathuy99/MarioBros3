@@ -17,7 +17,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	vy += ay * dt;
 	vx += ax * dt;
-
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
 
 	// reset untouchable timer if untouchable time has passed
@@ -25,6 +24,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		untouchable_start = 0;
 		untouchable = 0;
+	}
+	//time mario kick
+	if (GetTickCount64() - kick_start > MARIO_KICK_TIME)
+	{
+		kick_start = 0;
+		isKick = false;
 	}
 
 	isOnPlatform = false;
@@ -69,20 +74,18 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
 	if (e->ny < 0)
 	{
+		vy = -MARIO_JUMP_DEFLECT_SPEED;
 		if (koopa->GetState() == KOOPA_STATE_WALKING)
 		{
 			koopa->SetState(KOOPA_STATE_SHELL);
-			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 		else if(koopa->GetState() == KOOPA_STATE_SHELL)
 		{
 			koopa->SetState(KOOPA_STATE_SHELL_SPIN);
-			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 		else if (koopa->GetState() == KOOPA_STATE_SHELL_SPIN)
 		{
 			koopa->SetState(KOOPA_STATE_SHELL);
-			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 	}
 	else 
@@ -102,6 +105,8 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 		}
 		else if (e->nx != 0 && koopa->GetState() == KOOPA_STATE_SHELL)
 		{
+
+			StartKick();
 			koopa->SetState(KOOPA_STATE_SHELL_SPIN);
 			if (e->nx < 0)
 				koopa->SetSpeed(KOOPA_WALKING_SPEED * 2,0);
@@ -289,7 +294,11 @@ int CMario::GetAniIdBig()
 				else if (ax == -MARIO_ACCEL_WALK_X)
 					aniId = ID_ANI_MARIO_WALKING_LEFT;
 			}
-
+	if (isKick) 
+	{
+		if(nx>0) aniId = ID_ANI_MARIO_KICK_RIGHT;
+		else aniId = ID_ANI_MARIO_KICK_LEFT;
+	}
 	if (aniId == -1) aniId = ID_ANI_MARIO_IDLE_RIGHT;
 
 	return aniId;
