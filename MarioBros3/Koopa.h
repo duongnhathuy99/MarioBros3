@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-#define KOOPA_GRAVITY 0.002f
+#define KOOPA_GRAVITY 0.0005f
 #define KOOPA_WALKING_SPEED 0.05f
 
 #define KOOPA_BBOX_HEIGHT 24
@@ -14,6 +14,7 @@
 #define KOOPA_STATE_WALKING 100
 #define KOOPA_STATE_SHELL 200
 #define KOOPA_STATE_SHELL_SPIN 300
+#define KOOPA_STATE_HELD_BY 400
 
 #define ID_ANI_KOOPA_WALKING_LEFT 9001
 #define ID_ANI_KOOPA_WALKING_RIGHT 9002
@@ -26,7 +27,7 @@ class CKoopa : public CGameObject
 protected:
 	float ax;
 	float ay;
-
+	BOOLEAN isHeldBy;
 	ULONGLONG shell_start;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
@@ -39,7 +40,13 @@ protected:
 
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 public:
-	CKoopa(float x, float y);
+	CKoopa(float x, float y) : CGameObject(x, y)
+	{
+		this->ax = 0;
+		this->ay = KOOPA_GRAVITY;
+		shell_start = -1;
+		SetState(KOOPA_STATE_WALKING);
+	};
 	virtual void SetState(int state);
 };
 

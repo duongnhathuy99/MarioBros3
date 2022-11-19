@@ -3,7 +3,7 @@
 
 #include "Animation.h"
 #include "Animations.h"
-
+#include "Koopa.h"
 #include "debug.h"
 
 #define MARIO_WALKING_SPEED		0.1f
@@ -60,8 +60,8 @@
 #define ID_ANI_MARIO_KICK_RIGHT 170
 #define ID_ANI_MARIO_KICK_LEFT 171
 
-#define ID_ANI_MARIO_HOLD_RIGHT 180
-#define ID_ANI_MARIO_HOLD_LEFT 181
+#define ID_ANI_MARIO_HOLD_ILDE_RIGHT 180
+#define ID_ANI_MARIO_HOLD_ILDE_LEFT 181
 
 #define ID_ANI_MARIO_HOLD_WALK_RIGHT 190
 #define ID_ANI_MARIO_HOLD_WALK_LEFT 191
@@ -128,11 +128,11 @@
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
-	BOOLEAN isKick;
+	BOOLEAN isKick, ishold;
 	float maxVx;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
-
+	CKoopa* holdKoopa;
 	int level; 
 	int untouchable; 
 	ULONGLONG untouchable_start;
@@ -156,15 +156,19 @@ public:
 	{
 		isSitting = false;
 		isKick = false;
+		ishold = false;
 		maxVx = 0.0f;
 		ax = 0.0f;
 		ay = MARIO_GRAVITY; 
 
 		level = MARIO_LEVEL_BIG;
 		untouchable = 0;
+		kick_start = -1;
 		untouchable_start = -1;
 		isOnPlatform = false;
 		coin = 0;
+
+		holdKoopa = NULL;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -183,5 +187,8 @@ public:
 	void SetLevel(int l);
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 	void StartKick() { isKick = true; kick_start = GetTickCount64(); }
+	void releaseHoldKoopa();
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+
+	void handleHoldKoopa();
 };

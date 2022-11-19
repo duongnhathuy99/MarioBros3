@@ -15,6 +15,7 @@
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	
 	vy += ay * dt;
 	vx += ax * dt;
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
@@ -35,7 +36,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	isOnPlatform = false;
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-	//DebugOutTitle(L"SizeObject: %d", coObjects->size());
+	handleHoldKoopa();
 }
 
 void CMario::OnNoCollision(DWORD dt)
@@ -105,12 +106,18 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 		}
 		else if (e->nx != 0 && koopa->GetState() == KOOPA_STATE_SHELL)
 		{
-
-			StartKick();
-			koopa->SetState(KOOPA_STATE_SHELL_SPIN);
-			if (e->nx < 0)
-				koopa->SetSpeed(KOOPA_WALKING_SPEED * 2,0);
-			else if((e->nx > 0)) koopa->SetSpeed(-KOOPA_WALKING_SPEED * 2, 0);
+			if (state == MARIO_STATE_RUNNING_RIGHT || state == MARIO_STATE_RUNNING_LEFT) {
+				ishold = true;
+				holdKoopa = koopa;
+				koopa->SetState(KOOPA_STATE_HELD_BY);
+			}
+			else {
+				StartKick();
+				koopa->SetState(KOOPA_STATE_SHELL_SPIN);
+				if (e->nx < 0)
+					koopa->SetSpeed(KOOPA_WALKING_SPEED * 3, 0);
+				else if ((e->nx > 0)) koopa->SetSpeed(-KOOPA_WALKING_SPEED * 3, 0);
+			}
 		}
 	}
 }
@@ -247,20 +254,30 @@ int CMario::GetAniIdBig()
 	int aniId = -1;
 	if (!isOnPlatform)
 	{
-		if (abs(ax) == MARIO_ACCEL_RUN_X)
-		{
-			if (nx >= 0)
-				aniId = ID_ANI_MARIO_JUMP_RUN_RIGHT;
+		if (!ishold) {
+			if (abs(ax) == MARIO_ACCEL_RUN_X)
+			{
+				if (nx >= 0)
+					aniId = ID_ANI_MARIO_JUMP_RUN_RIGHT;
+				else
+					aniId = ID_ANI_MARIO_JUMP_RUN_LEFT;
+			}
 			else
-				aniId = ID_ANI_MARIO_JUMP_RUN_LEFT;
+			{
+				if (nx >= 0)
+					aniId = ID_ANI_MARIO_JUMP_WALK_RIGHT;
+				else
+					aniId = ID_ANI_MARIO_JUMP_WALK_LEFT;
+			}
 		}
 		else
 		{
-			if (nx >= 0)
-				aniId = ID_ANI_MARIO_JUMP_WALK_RIGHT;
+			if(nx >= 0)
+				aniId = ID_ANI_MARIO_HOLD_JUMP_RIGHT;
 			else
-				aniId = ID_ANI_MARIO_JUMP_WALK_LEFT;
+				aniId = ID_ANI_MARIO_HOLD_JUMP_LEFT;
 		}
+
 	}
 	else
 		if (isSitting)
@@ -273,26 +290,42 @@ int CMario::GetAniIdBig()
 		else
 			if (vx == 0)
 			{
-				if (nx > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
-				else aniId = ID_ANI_MARIO_IDLE_LEFT;
+				if (ishold)
+				{
+					if (nx > 0) aniId = ID_ANI_MARIO_HOLD_ILDE_RIGHT;
+					else aniId = ID_ANI_MARIO_HOLD_ILDE_LEFT;
+				}
+				else 
+				{
+					if (nx > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
+					else aniId = ID_ANI_MARIO_IDLE_LEFT;
+				}
 			}
 			else if (vx > 0)
 			{
-				if (ax < 0)
-					aniId = ID_ANI_MARIO_BRACE_RIGHT;
-				else if (ax == MARIO_ACCEL_RUN_X)
-					aniId = ID_ANI_MARIO_RUNNING_RIGHT;
-				else if (ax == MARIO_ACCEL_WALK_X)
-					aniId = ID_ANI_MARIO_WALKING_RIGHT;
+				if (!ishold) {
+					if (ax < 0)
+						aniId = ID_ANI_MARIO_BRACE_RIGHT;
+					else if (ax == MARIO_ACCEL_RUN_X)
+						aniId = ID_ANI_MARIO_RUNNING_RIGHT;
+					else if (ax == MARIO_ACCEL_WALK_X)
+						aniId = ID_ANI_MARIO_WALKING_RIGHT;
+				}
+				else
+					aniId = ID_ANI_MARIO_HOLD_WALK_RIGHT;
 			}
 			else // vx < 0
 			{
-				if (ax > 0)
-					aniId = ID_ANI_MARIO_BRACE_LEFT;
-				else if (ax == -MARIO_ACCEL_RUN_X)
-					aniId = ID_ANI_MARIO_RUNNING_LEFT;
-				else if (ax == -MARIO_ACCEL_WALK_X)
-					aniId = ID_ANI_MARIO_WALKING_LEFT;
+				if (!ishold) {
+					if (ax > 0)
+						aniId = ID_ANI_MARIO_BRACE_LEFT;
+					else if (ax == -MARIO_ACCEL_RUN_X)
+						aniId = ID_ANI_MARIO_RUNNING_LEFT;
+					else if (ax == -MARIO_ACCEL_WALK_X)
+						aniId = ID_ANI_MARIO_WALKING_LEFT;
+				}
+				else
+					aniId = ID_ANI_MARIO_HOLD_WALK_LEFT;
 			}
 	if (isKick) 
 	{
@@ -314,8 +347,8 @@ void CMario::Render()
 	else if (level == MARIO_LEVEL_BIG)
 		aniId = GetAniIdBig();
 	else if (level == MARIO_LEVEL_SMALL)
-		aniId = GetAniIdSmall();
-
+		//aniId = GetAniIdSmall();
+		aniId = GetAniIdBig()+1000;
 	animations->Get(aniId)->Render(x, y);
 
 	RenderBoundingBox();
@@ -439,5 +472,51 @@ void CMario::SetLevel(int l)
 		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
 	level = l;
+}
+void CMario::handleHoldKoopa() {
+	if (ishold) {
+		if (holdKoopa->GetState() == KOOPA_STATE_WALKING)
+		{
+			ishold = false;
+		}
+		else
+		{
+			if (level == MARIO_LEVEL_SMALL)
+			{
+				if (nx > 0)
+					holdKoopa->SetPosition(x + (MARIO_SMALL_BBOX_WIDTH + KOOPA_BBOX_SHELL_WIDTH) / 2, y + (MARIO_SMALL_BBOX_HEIGHT - KOOPA_BBOX_SHELL_HEIGHT) / 2);
+				else
+					holdKoopa->SetPosition(x - (MARIO_SMALL_BBOX_WIDTH + KOOPA_BBOX_SHELL_WIDTH) / 2, y + (MARIO_SMALL_BBOX_HEIGHT - KOOPA_BBOX_SHELL_HEIGHT) / 2);
+			}
+			else
+			{
+				if (!isSitting)
+				{
+					if (nx > 0)
+						holdKoopa->SetPosition(x + (MARIO_BIG_BBOX_WIDTH + KOOPA_BBOX_SHELL_WIDTH) / 2, y + (MARIO_BIG_BBOX_HEIGHT - KOOPA_BBOX_SHELL_HEIGHT) / 2);
+					else
+						holdKoopa->SetPosition(x - (MARIO_BIG_BBOX_WIDTH + KOOPA_BBOX_SHELL_WIDTH) / 2, y + (MARIO_BIG_BBOX_HEIGHT - KOOPA_BBOX_SHELL_HEIGHT) / 2);
+				}
+				else
+				{
+					if (nx > 0)
+						holdKoopa->SetPosition(x + (MARIO_BIG_BBOX_WIDTH + KOOPA_BBOX_SHELL_WIDTH) / 2, y + (MARIO_BIG_SITTING_BBOX_HEIGHT - KOOPA_BBOX_SHELL_HEIGHT) / 2);
+					else
+						holdKoopa->SetPosition(x - (MARIO_BIG_BBOX_WIDTH + KOOPA_BBOX_SHELL_WIDTH) / 2, y + (MARIO_BIG_SITTING_BBOX_HEIGHT - KOOPA_BBOX_SHELL_HEIGHT) / 2);
+				}
+			}
+		}
+	}
+}
+void  CMario::releaseHoldKoopa() { 
+	if (ishold) {
+		ishold = false;
+		holdKoopa->SetState(KOOPA_STATE_SHELL_SPIN);
+		if (nx > 0)
+			holdKoopa->SetSpeed(KOOPA_WALKING_SPEED * 3, 0);
+		else
+			holdKoopa->SetSpeed(-KOOPA_WALKING_SPEED * 3, 0);
+		holdKoopa = NULL;
+	}
 }
 
