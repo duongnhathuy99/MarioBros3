@@ -163,6 +163,7 @@ void CCollision::Scan(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* objDe
 {
 	for (UINT i = 0; i < objDests->size(); i++)
 	{
+		if (objSrc->IsCollidable()==2 && objDests->at(i)->IsBlocking())continue;
 		LPCOLLISIONEVENT e = SweptAABB(objSrc, dt, objDests->at(i));
 
 		if (e->WasCollided()==1)

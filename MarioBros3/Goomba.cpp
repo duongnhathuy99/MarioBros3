@@ -70,6 +70,10 @@ void CGoomba::Render()
 	{
 		aniId = ID_ANI_GOOMBA_DIE;
 	}
+	else if (state == GOOMBA_STATE_OVERTURNED)
+	{
+		aniId = ID_ANI_GOOMBA_OVERTURNED;
+	}
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x,y);
 	RenderBoundingBox();
@@ -89,6 +93,10 @@ void CGoomba::SetState(int state)
 			break;
 		case GOOMBA_STATE_WALKING: 
 			vx = -GOOMBA_WALKING_SPEED;
+			break;
+		case GOOMBA_STATE_OVERTURNED:
+			vx = 0;
+			vy -= GOOMBA_OVERTURNE_SPEED_Y;
 			break;
 	}
 }
