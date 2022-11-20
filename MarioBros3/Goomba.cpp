@@ -1,10 +1,11 @@
 #include "Goomba.h"
 
-CGoomba::CGoomba(float x, float y):CGameObject(x, y)
+CGoomba::CGoomba(float x, float y, int type):CGameObject(x, y)
 {
 	this->ax = 0;
 	this->ay = GOOMBA_GRAVITY;
 	die_start = -1;
+	this->type = type;
 	SetState(GOOMBA_STATE_WALKING);
 }
 
@@ -74,7 +75,7 @@ void CGoomba::Render()
 	{
 		aniId = ID_ANI_GOOMBA_OVERTURNED;
 	}
-
+	if (type == 1) aniId += ID_ANI_GOOMBA_RED;
 	CAnimations::GetInstance()->Get(aniId)->Render(x,y);
 	RenderBoundingBox();
 }

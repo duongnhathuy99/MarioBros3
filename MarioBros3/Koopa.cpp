@@ -57,7 +57,7 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 }
 void CKoopa::OnCollisionWitSemiSolidPlatform(LPCOLLISIONEVENT e)
 {
-	if ((e->ny < 0) && state == KOOPA_STATE_WALKING)
+	if ((e->ny < 0) && state == KOOPA_STATE_WALKING && type==1)
 	{
 		float l, t, r, b;
 		e->obj->GetBoundingBox(l, t, r, b);
@@ -144,6 +144,9 @@ void CKoopa::Render()
 	{
 		aniId = ID_ANI_KOOPA_OVERTURNED_SHELL;
 	}
+
+	if (type == 1) 
+		aniId += ID_ANI_KOOPA_RED;
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	RenderBoundingBox();
 }

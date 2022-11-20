@@ -30,6 +30,7 @@
 #define ID_ANI_KOOPA_OVERTURNED_SHELL 9008
 #define ID_ANI_KOOPA_OVERTURNED_RETURN_WALKING 9009
 #define ID_ANI_KOOPA_OVERTURNED_SHELL_SPIN 90010
+#define ID_ANI_KOOPA_RED 10
 
 class CKoopa : public CGameObject
 {
@@ -38,7 +39,7 @@ protected:
 	float ay;
 	BOOLEAN isHeldBy;
 	ULONGLONG shell_start;
-
+	int type;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
@@ -57,14 +58,14 @@ protected:
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e);
 public:
-	CKoopa(float x, float y) : CGameObject(x, y)
+	CKoopa(float x, float y, int type) : CGameObject(x, y)
 	{
 		this->ax = 0;
 		this->ay = KOOPA_GRAVITY;
 		shell_start = -1;
 		SetState(KOOPA_STATE_WALKING);
 		isHeldBy=false;
-
+		this->type = type;
 	};
 	virtual void SetState(int state);
 };
