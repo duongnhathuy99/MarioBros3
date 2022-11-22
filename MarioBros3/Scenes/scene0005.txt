@@ -4,6 +4,7 @@ Assets\mario.txt
 Assets\coin.txt
 Assets\cloud.txt
 Assets\brick.txt
+Assets\fireball.txt
 Assets\questionBrick.txt
 Assets\mushroom.txt
 Assets\goomba.txt

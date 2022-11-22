@@ -25,7 +25,7 @@ protected:
 	ULONGLONG timestop_start;
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
-	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void RenderBoundingBox();
 	virtual void Render();
 

@@ -7,8 +7,12 @@
 #define ID_ANI_PRIRANHA_GREEN_UP_RIGHT 8006
 class CFirePiranhaPlant :public CPiranhaPlant
 {
+	BOOLEAN isfire;
 	void Render();
+	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	void ShootFireball();
 public:
-	CFirePiranhaPlant(float x, float y, int stem, int Color) :CPiranhaPlant(x, y, stem, Color) {};
+	CFirePiranhaPlant(float x, float y, int stem, int Color) :CPiranhaPlant(x, y, stem, Color) { };
+	void SetState(int state);
 };
 
