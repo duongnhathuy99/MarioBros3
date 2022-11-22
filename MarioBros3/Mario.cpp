@@ -9,6 +9,7 @@
 #include "Portal.h"
 #include "QuestionBrick.h"
 #include "Mushroom.h"
+#include "Leaf.h"
 #include "Koopa.h"
 
 #include "Collision.h"
@@ -68,6 +69,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithQuestionBrick(e);
 	else if (dynamic_cast<CMushroom*>(e->obj))
 		OnCollisionWithMushroom(e);
+	else if (dynamic_cast<CLeaf*>(e->obj))
+		OnCollisionWithLeaf(e);
 	else if (dynamic_cast<CKoopa*>(e->obj))
 		OnCollisionWithKoopa(e);
 }
@@ -183,6 +186,11 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 	e->obj->Delete();
 	if (MARIO_LEVEL_SMALL)
 		SetLevel(MARIO_LEVEL_BIG);
+}
+void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
+{
+	e->obj->Delete();
+	SetLevel(MARIO_LEVEL_RACCOON);
 }
 
 //

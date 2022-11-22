@@ -38,6 +38,11 @@ void CQuestionBrick::SetState(int state) {
 			coin->SetState(COIN_STATE_MOVEUP);
 			scene->AddObject(coin);
 		}
+		if (item == ITEM_LEAF) {
+			CLeaf* leaf = new CLeaf(x, y);
+			//leaf->SetState(COIN_STATE_MOVEUP);
+			scene->AddObject(leaf);
+		}
 		break;
 	case QUESTION_BRICK_STATE_MOVEDOWN:
 		vy = SPEED_QUESTION_BRICK;

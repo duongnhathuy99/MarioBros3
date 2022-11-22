@@ -4,6 +4,7 @@
 #include "Animations.h"
 #include "Coin.h"
 #include "Mushroom.h"
+#include "Leaf.h"
 #include "PlayScene.h"
 
 #define ID_ANI_BRICK_ITEM 6000
@@ -22,6 +23,7 @@
 
 #define ITEM_COIN 1
 #define ITEM_MUSHROOM 2
+#define ITEM_LEAF 3
 
 class CQuestionBrick : public CGameObject{
 	bool questionBrick_unbox;
