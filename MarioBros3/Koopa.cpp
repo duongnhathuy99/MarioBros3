@@ -5,6 +5,7 @@
 #include "Goomba.h"
 #include "QuestionBrick.h"
 #include "Koopa.h"
+#include "PiranhaPlant.h"
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
@@ -54,6 +55,8 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithQuestionBrick(e);
 	else if (dynamic_cast<CKoopa*>(e->obj))
 		OnCollisionWithKoopa(e);
+	else if (dynamic_cast<CPiranhaPlant*>(e->obj))
+		OnCollisionWithPiranhaPlant(e);
 }
 void CKoopa::OnCollisionWitSemiSolidPlatform(LPCOLLISIONEVENT e)
 {
@@ -108,6 +111,20 @@ void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 		koopa->SetState(KOOPA_STATE_SHELL_OVERTURNED);
 	}
 }
+void CKoopa::OnCollisionWithPiranhaPlant(LPCOLLISIONEVENT e)
+{
+	CPiranhaPlant* piranha = dynamic_cast<CPiranhaPlant*>(e->obj);
+	if (state == KOOPA_STATE_HELD_BY)
+	{
+		SetState(KOOPA_STATE_SHELL_OVERTURNED);
+		piranha->Delete();
+	}
+	else if ((e->nx != 0) && state == KOOPA_STATE_SHELL_SPIN)
+	{
+		piranha->Delete();
+	}
+}
+
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	vy += ay * dt;
