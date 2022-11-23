@@ -45,7 +45,7 @@ void CFirePiranhaPlant::ShootFireball()
 	fireball->SetState(FIREBALL_STATE_PIRANHA);
 	float mario_x, mario_y, a;
 	scene->GetPlayer()->GetPosition(mario_x, mario_y);
-	a = (mario_y - y) / (mario_x - x);  //VTCP(1,a)
+	a = (mario_y - y) / (mario_x - x);  
 	if (mario_x < x)
 		fireball->SetSpeed(-FIREBALL_SPEED, -a * FIREBALL_SPEED);
 	else fireball->SetSpeed(FIREBALL_SPEED, a * FIREBALL_SPEED);
