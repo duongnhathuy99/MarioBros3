@@ -85,22 +85,25 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 	if (e->ny < 0)
 	{
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
-		if (koopa->GetState() == KOOPA_STATE_WALKING)
+		switch (koopa->GetState())
 		{
+		case KOOPA_STATE_WALKING:
 			koopa->SetState(KOOPA_STATE_SHELL);
-		}
-		else if(koopa->GetState() == KOOPA_STATE_SHELL)
-		{
+			break;
+		case KOOPA_STATE_SHELL:
 			koopa->SetState(KOOPA_STATE_SHELL_SPIN);
-		}
-		else if (koopa->GetState() == KOOPA_STATE_SHELL_SPIN)
-		{
+			break;
+		case KOOPA_STATE_SHELL_SPIN:
 			koopa->SetState(KOOPA_STATE_SHELL);
+			break;
+		case PARAKOOPA_STATE_JUMP:
+			koopa->SetState(KOOPA_STATE_WALKING);
+			break;
 		}
 	}
 	else 
 	{
-		if ( koopa->GetState() == KOOPA_STATE_WALKING || koopa->GetState() == KOOPA_STATE_SHELL_SPIN)
+		if ( koopa->GetState() == KOOPA_STATE_WALKING || koopa->GetState() == KOOPA_STATE_SHELL_SPIN|| koopa->GetState()== PARAKOOPA_STATE_JUMP)
 		{
 			MarioByAttacked();
 		}
@@ -128,13 +131,9 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	// jump on top >> kill Goomba and deflect a bit 
 	if (e->ny < 0)
 	{
-		goomba->TakeDamage();
-		vy = -MARIO_JUMP_DEFLECT_SPEED;
-		/*if (goomba->GetState() != GOOMBA_STATE_DIE)
-		{
-			goomba->SetState(GOOMBA_STATE_DIE);
+		if (goomba->GetState() != GOOMBA_STATE_DIE)
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
-		}*/
+		goomba->TakeDamage();
 	}
 	else // hit by Goomba
 	{

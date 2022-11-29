@@ -9,7 +9,7 @@
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	if (state == KOOPA_STATE_WALKING)
+	if (state == KOOPA_STATE_WALKING || state== PARAKOOPA_STATE_JUMP)
 	{
 		left = x - KOOPA_BBOX_WIDTH / 2;
 		top = y - KOOPA_BBOX_HEIGHT / 2;
@@ -142,7 +142,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void CKoopa::Render()
 {
 	int aniId= ID_ANI_KOOPA_WALKING_LEFT;
-	if (state == KOOPA_STATE_WALKING )
+	if (state == KOOPA_STATE_WALKING ||state== PARAKOOPA_STATE_JUMP)
 	{
 		if(vx<0) aniId = ID_ANI_KOOPA_WALKING_LEFT;
 		else aniId = ID_ANI_KOOPA_WALKING_RIGHT;
@@ -165,7 +165,7 @@ void CKoopa::Render()
 	if (type == 1) 
 		aniId += ID_ANI_KOOPA_RED;
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CKoopa::SetState(int state)
