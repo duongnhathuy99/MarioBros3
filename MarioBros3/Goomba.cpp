@@ -4,8 +4,11 @@ CGoomba::CGoomba(float x, float y, int type):CGameObject(x, y)
 {
 	this->ax = 0;
 	this->ay = GOOMBA_GRAVITY;
+	this->vx = -GOOMBA_WALKING_SPEED;
 	die_start = -1;
 	this->type = type;
+	health= HEALTH_GOOMBA;
+
 	SetState(GOOMBA_STATE_WALKING);
 }
 
@@ -18,7 +21,7 @@ void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &botto
 		right = left + GOOMBA_BBOX_WIDTH;
 		bottom = top + GOOMBA_BBOX_HEIGHT_DIE;
 	}
-	else
+	else if(state == GOOMBA_STATE_WALKING)
 	{ 
 		left = x - GOOMBA_BBOX_WIDTH/2;
 		top = y - GOOMBA_BBOX_HEIGHT/2;
@@ -77,7 +80,7 @@ void CGoomba::Render()
 	}
 	if (type == 1) aniId += ID_ANI_GOOMBA_RED;
 	CAnimations::GetInstance()->Get(aniId)->Render(x,y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CGoomba::SetState(int state)
@@ -93,11 +96,19 @@ void CGoomba::SetState(int state)
 			ay = 0; 
 			break;
 		case GOOMBA_STATE_WALKING: 
-			vx = -GOOMBA_WALKING_SPEED;
+			//vx = -GOOMBA_WALKING_SPEED;
 			break;
 		case GOOMBA_STATE_OVERTURNED:
 			vx = 0;
 			vy -= GOOMBA_OVERTURNE_SPEED_Y;
 			break;
 	}
+}
+
+void CGoomba::TakeDamage() {
+	health--;
+	if (health == 1)
+		SetState(GOOMBA_STATE_WALKING);
+	else if (health == 0)
+		SetState(GOOMBA_STATE_DIE);
 }

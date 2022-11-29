@@ -17,6 +17,7 @@
 #include "PiranhaPlant.h"
 #include "FirePiranhaPlant.h"
 #include "Koopa.h"
+#include "Paragoomba.h"
 #include "SampleKeyEventHandler.h"
 
 using namespace std;
@@ -128,6 +129,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{ 
 		int type = atoi(tokens[3].c_str());
 		obj = new CGoomba(x, y, type); break;
+	}
+	case OBJECT_TYPE_PARAGOOMBA:
+	{
+		int type = atoi(tokens[3].c_str());
+		obj = new CParagoomba(x, y, type); break;
 	}
 	case OBJECT_TYPE_KOOPA: 
 	{
