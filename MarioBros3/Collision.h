@@ -61,7 +61,9 @@ public:
 		float& t,
 		float& nx,
 		float& ny);
-
+	bool isCollisionAABB(
+		LPGAMEOBJECT objSrc, 
+		LPGAMEOBJECT objDest);
 	LPCOLLISIONEVENT SweptAABB(
 		LPGAMEOBJECT objSrc, 
 		DWORD dt,

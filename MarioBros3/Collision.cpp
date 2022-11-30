@@ -368,3 +368,13 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
+
+bool CCollision::isCollisionAABB(
+	LPGAMEOBJECT objSrc,
+	LPGAMEOBJECT objDest) {
+	float sl, st, sr, sb;		// static object bbox
+	float ml, mt, mr, mb;		// moving object bbox
+	objSrc->GetBoundingBox(ml, mt, mr, mb);
+	objDest->GetBoundingBox(sl, st, sr, sb);
+	return (!(mr < sl || ml > sr || mb < st || mt > sb));
+}

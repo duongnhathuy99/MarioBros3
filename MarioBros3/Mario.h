@@ -4,6 +4,7 @@
 #include "Animation.h"
 #include "Animations.h"
 #include "Koopa.h"
+#include "Tail.h"
 #include "debug.h"
 
 #define MARIO_WALKING_SPEED		0.1f
@@ -69,6 +70,9 @@
 #define ID_ANI_MARIO_HOLD_JUMP_RIGHT 200
 #define ID_ANI_MARIO_HOLD_JUMP_LEFT 201
 
+#define ID_ANI_MARIO_ATTACK_RIGHT 210
+#define ID_ANI_MARIO_ATTACK_LEFT 211
+
 #define DISTANCE_ID_ANI_MARIO 1000
 #define ID_ANI_MARIO_DIE 999
 
@@ -98,20 +102,22 @@
 
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_KICK_TIME 150
+#define MARIO_TAIL_ATTACK_TIME 360
 
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
-	BOOLEAN isKick, ishold;
+	BOOLEAN isKick, ishold, isAttack;
 	float maxVx;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
 	CKoopa* holdKoopa;
+	CTail* tail;
 	int level; 
 	int untouchable; 
 	ULONGLONG untouchable_start;
 	ULONGLONG kick_start;
-
+	ULONGLONG attack_start;
 	BOOLEAN isOnPlatform;
 	int coin; 
 
@@ -125,7 +131,6 @@ class CMario : public CGameObject
 	void OnCollisionWithPiranhaPlant(LPCOLLISIONEVENT e);
 	void OnCollisionWithFireball(LPCOLLISIONEVENT e);
 
-	void MarioByAttacked();
 	int GetAniId();
 
 public:
@@ -133,6 +138,7 @@ public:
 	{
 		isSitting = false;
 		isKick = false;
+		isAttack = false;
 		ishold = false;
 		maxVx = 0.0f;
 		ax = 0.0f;
@@ -141,10 +147,11 @@ public:
 		level = MARIO_LEVEL_BIG;
 		untouchable = 0;
 		kick_start = -1;
+		attack_start = -1;
 		untouchable_start = -1;
 		isOnPlatform = false;
 		coin = 0;
-
+		tail = NULL;
 		holdKoopa = NULL;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -161,11 +168,14 @@ public:
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
 
+	void MarioByAttacked();
 	void SetLevel(int l);
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 	void StartKick() { isKick = true; kick_start = GetTickCount64(); }
 	void releaseHoldKoopa();
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 
+	void handleTail(DWORD dt);
 	void handleHoldKoopa();
+	void tailAttack();
 };

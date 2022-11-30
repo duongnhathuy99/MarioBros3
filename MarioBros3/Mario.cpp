@@ -26,7 +26,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	// reset untouchable timer if untouchable time has passed
 	if ( GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME) 
 	{
-		untouchable_start = 0;
+		untouchable_start = 0;	
 		untouchable = 0;
 	}
 	//time mario kick
@@ -35,10 +35,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		kick_start = 0;
 		isKick = false;
 	}
-
+	
 	isOnPlatform = false;
-
+	DebugOutTitle(L"count object:%d", coObjects->size());
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	handleTail(dt);
 	handleHoldKoopa();
 }
 
@@ -273,6 +274,11 @@ int CMario::GetAniId()
 		if(nx>0) aniId = ID_ANI_MARIO_KICK_RIGHT;
 		else aniId = ID_ANI_MARIO_KICK_LEFT;
 	}
+	if (isAttack)
+	{
+		if (nx > 0) aniId = ID_ANI_MARIO_ATTACK_RIGHT;
+		else aniId = ID_ANI_MARIO_ATTACK_LEFT;
+	}
 	if (aniId == -1) aniId = ID_ANI_MARIO_IDLE_RIGHT;
 
 	return aniId;
@@ -294,8 +300,8 @@ void CMario::Render()
 	else if (level == MARIO_LEVEL_RACCOON)
 		aniId = GetAniId() + level  * DISTANCE_ID_ANI_MARIO;
 
-	if(level == MARIO_LEVEL_RACCOON)		
-		if(nx>0)
+	if(level == MARIO_LEVEL_RACCOON )
+		if(nx>0 )
 			animations->Get(aniId)->Render(x - MARIO_RACCOON_WIDTH_ADJUST, y);
 		else
 			animations->Get(aniId)->Render(x + MARIO_RACCOON_WIDTH_ADJUST, y);
@@ -417,10 +423,20 @@ void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom
 
 void CMario::SetLevel(int l)
 {
+	if (level == l || isAttack) return;
 	// Adjust position to avoid falling off platform
 	if (this->level == MARIO_LEVEL_SMALL)
 	{
 		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
+	}
+	if (l == MARIO_LEVEL_RACCOON) {
+		tail = new CTail(x, y + 6);
+		LPPLAYSCENE scene = (LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene();
+		scene->AddObject(tail);
+	}
+	if (level == MARIO_LEVEL_RACCOON) {
+		tail->Delete();
+		tail = NULL;
 	}
 	level = l;
 }
@@ -429,12 +445,12 @@ void CMario::MarioByAttacked() {
 	{
 		if (level > MARIO_LEVEL_BIG)
 		{
-			level = MARIO_LEVEL_BIG;
+			SetLevel(MARIO_LEVEL_BIG);
 			StartUntouchable();
 		}
 		else if (level == MARIO_LEVEL_BIG)
 		{
-			level = MARIO_LEVEL_SMALL;
+			SetLevel(MARIO_LEVEL_SMALL);
 			StartUntouchable();
 		}
 		else 
@@ -486,7 +502,7 @@ void CMario::handleHoldKoopa() {
 		}
 	}
 }
-void  CMario::releaseHoldKoopa() { 
+void CMario::releaseHoldKoopa() { 
 	if (ishold) {
 		StartKick();
 		ishold = false;
@@ -496,6 +512,44 @@ void  CMario::releaseHoldKoopa() {
 		else
 			holdKoopa->SetSpeed(-KOOPA_WALKING_SPEED * 3, 0);
 		holdKoopa = NULL;
+	}
+}
+void CMario::handleTail(DWORD dt) {
+	if(level == MARIO_LEVEL_RACCOON)
+		tail->calculateSpeed(dt, x - 16 * nx, y + 6);
+	if (isAttack) {
+		float tail_x, tail_y;
+		tail_y = y + 6;
+		tail_x = x;
+		if (GetTickCount64() - attack_start > MARIO_TAIL_ATTACK_TIME)
+		{
+			tail->SetState(TAIL_STATE_ATTACK_INEFFICIENT);
+			attack_start = 0;
+			isAttack = false;
+			return;
+		}
+		else if (GetTickCount64() - attack_start > MARIO_TAIL_ATTACK_TIME * 3 / 4)
+		{
+			tail->SetState(TAIL_STATE_ATTACK_FRONT);
+			tail_x = x - 16 * nx;
+		}
+		else if (GetTickCount64() - attack_start > MARIO_TAIL_ATTACK_TIME * 2 / 4)
+		{
+			tail->SetState(TAIL_STATE_ATTACK_INEFFICIENT);
+			tail_x = x;
+		}
+		else if (GetTickCount64() - attack_start > MARIO_TAIL_ATTACK_TIME * 1 / 4)
+		{
+			tail->SetState(TAIL_STATE_ATTACK_BACK);
+			tail_x = x - 16 * (-nx);
+		}
+		tail->calculateSpeed(dt, tail_x, tail_y);
+	}
+}
+void CMario::tailAttack() {
+	if (!isAttack && level== MARIO_LEVEL_RACCOON) {
+		isAttack = true;
+		attack_start = GetTickCount64();
 	}
 }
 
