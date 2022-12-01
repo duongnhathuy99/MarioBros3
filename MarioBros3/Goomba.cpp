@@ -74,7 +74,7 @@ void CGoomba::Render()
 	{
 		aniId = ID_ANI_GOOMBA_DIE;
 	}
-	else if (state == GOOMBA_STATE_OVERTURNED)
+	else if (state == GOOMBA_STATE_DIE_OVERTURNED)
 	{
 		aniId = ID_ANI_GOOMBA_OVERTURNED;
 	}
@@ -98,9 +98,10 @@ void CGoomba::SetState(int state)
 		case GOOMBA_STATE_WALKING: 
 			//vx = -GOOMBA_WALKING_SPEED;
 			break;
-		case GOOMBA_STATE_OVERTURNED:
+		case GOOMBA_STATE_DIE_OVERTURNED:
+			health = 0;
 			vx = 0;
-			vy -= GOOMBA_OVERTURNE_SPEED_Y;
+			vy -= GOOMBA_DIE_OVERTURNED_DEFLECT_Y;
 			break;
 	}
 }

@@ -1,9 +1,10 @@
 #pragma once
 #include "GameObject.h"
 #define KOOPA_GRAVITY 0.0005f
-//#define KOOPA_GRAVITY 0.002f
 #define KOOPA_WALKING_SPEED 0.05f
-#define KOOPA_OVERTURNE_SPEED_Y 0.1f
+#define KOOPA_DIE_OVERTURNED_DEFLECT_Y 0.1f
+#define KOOPA_OVERTURNED_DEFLECT_Y 0.2f
+#define KOOPA_OVERTURNED_DEFLECT_X 0.07f
 
 #define KOOPA_BBOX_HEIGHT 24
 #define KOOPA_BBOX_WIDTH 16
@@ -17,7 +18,7 @@
 #define KOOPA_STATE_SHELL 200
 #define KOOPA_STATE_SHELL_SPIN 300
 #define KOOPA_STATE_HELD_BY 400
-#define KOOPA_STATE_SHELL_OVERTURNED 500 
+#define KOOPA_STATE_DIE_SHELL_OVERTURNED 500 
 #define PARAKOOPA_STATE_JUMP 600 
 
 #define ID_ANI_KOOPA_WALKING_LEFT 9001
@@ -26,11 +27,10 @@
 #define ID_ANI_KOOPA_RETURN_WALKING 9004
 #define ID_ANI_KOOPA_SHELL_SPIN 9005
 
-#define ID_ANI_KOOPA_OVERTURNED_WALKING_LEFT 9006
-#define ID_ANI_KOOPA_OVERTURNED_WALKING_RIGHT 9007
 #define ID_ANI_KOOPA_OVERTURNED_SHELL 9008
 #define ID_ANI_KOOPA_OVERTURNED_RETURN_WALKING 9009
 #define ID_ANI_KOOPA_OVERTURNED_SHELL_SPIN 90010
+
 #define ID_ANI_KOOPA_RED 10
 
 class CKoopa : public CGameObject
@@ -39,6 +39,7 @@ protected:
 	float ax;
 	float ay;
 	BOOLEAN isHeldBy;
+	BOOLEAN isOverturned;
 	ULONGLONG shell_start;
 	int type;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
@@ -46,7 +47,7 @@ protected:
 	virtual void Render();
 
 	virtual int IsCollidable() {
-		if (state == KOOPA_STATE_SHELL_OVERTURNED) return 0;
+		if (state == KOOPA_STATE_DIE_SHELL_OVERTURNED) return 0;
 		else if (state == KOOPA_STATE_HELD_BY) return 2;
 		else return 1;
 	};
@@ -66,9 +67,15 @@ public:
 		this->ay = KOOPA_GRAVITY;
 		shell_start = -1;
 		SetState(KOOPA_STATE_WALKING);
-		isHeldBy=false;
+		this->isHeldBy = false;
+		this->isOverturned = false;
 		this->type = type;
 	};
 	virtual void SetState(int state);
+	void AttackedByTail() {
+		isOverturned = true;  
+		SetState(KOOPA_STATE_SHELL); 
+		//vy -= KOOPA_OVERTURNED_SPEED_Y;
+	}
 };
 

@@ -3,7 +3,7 @@
 
 #define GOOMBA_GRAVITY 0.0005f
 #define GOOMBA_WALKING_SPEED 0.05f
-#define GOOMBA_OVERTURNE_SPEED_Y 0.1f
+#define GOOMBA_DIE_OVERTURNED_DEFLECT_Y 0.1f
 
 #define GOOMBA_BBOX_WIDTH 16
 #define GOOMBA_BBOX_HEIGHT 14
@@ -13,7 +13,7 @@
 
 #define GOOMBA_STATE_WALKING 100
 #define GOOMBA_STATE_DIE 200
-#define GOOMBA_STATE_OVERTURNED 300
+#define GOOMBA_STATE_DIE_OVERTURNED 300
 
 #define ID_ANI_GOOMBA_WALKING 5000
 #define ID_ANI_GOOMBA_DIE 5001
@@ -35,7 +35,7 @@ protected:
 	virtual void Render();
 
 	virtual int IsCollidable() { 
-		if (state == GOOMBA_STATE_OVERTURNED) return 0;
+		if (state == GOOMBA_STATE_DIE_OVERTURNED) return 0;
 		else return 1;
 	};
 	virtual int IsBlocking() { return 0; }

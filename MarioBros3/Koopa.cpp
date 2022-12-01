@@ -39,6 +39,7 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		if (e->ny != 0)
 		{
 			vy = 0;
+			if(e->ny < 0 && isOverturned && state == KOOPA_STATE_SHELL)vx=0;
 		}
 		else if (e->nx != 0)
 		{
@@ -81,12 +82,12 @@ void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 	if (state == KOOPA_STATE_HELD_BY)
 	{
-		SetState(KOOPA_STATE_SHELL_OVERTURNED);
-		goomba->SetState(GOOMBA_STATE_OVERTURNED);
+		SetState(KOOPA_STATE_DIE_SHELL_OVERTURNED);
+		goomba->SetState(GOOMBA_STATE_DIE_OVERTURNED);
 	}
 	else if ((e->nx != 0) && state == KOOPA_STATE_SHELL_SPIN)
 	{
-		goomba->SetState(GOOMBA_STATE_OVERTURNED);
+		goomba->SetState(GOOMBA_STATE_DIE_OVERTURNED);
 	}
 }
 void CKoopa::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
@@ -103,12 +104,12 @@ void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
 	if (state == KOOPA_STATE_HELD_BY)
 	{
-		SetState(KOOPA_STATE_SHELL_OVERTURNED);
-		koopa->SetState(KOOPA_STATE_SHELL_OVERTURNED);
+		SetState(KOOPA_STATE_DIE_SHELL_OVERTURNED);
+		koopa->SetState(KOOPA_STATE_DIE_SHELL_OVERTURNED);
 	}
 	else if ((e->nx != 0) && (state == KOOPA_STATE_SHELL_SPIN))
 	{
-		koopa->SetState(KOOPA_STATE_SHELL_OVERTURNED);
+		koopa->SetState(KOOPA_STATE_DIE_SHELL_OVERTURNED);
 	}
 }
 void CKoopa::OnCollisionWithPiranhaPlant(LPCOLLISIONEVENT e)
@@ -116,7 +117,7 @@ void CKoopa::OnCollisionWithPiranhaPlant(LPCOLLISIONEVENT e)
 	CPiranhaPlant* piranha = dynamic_cast<CPiranhaPlant*>(e->obj);
 	if (state == KOOPA_STATE_HELD_BY)
 	{
-		SetState(KOOPA_STATE_SHELL_OVERTURNED);
+		SetState(KOOPA_STATE_DIE_SHELL_OVERTURNED);
 		piranha->Delete();
 	}
 	else if ((e->nx != 0) && state == KOOPA_STATE_SHELL_SPIN)
@@ -142,26 +143,44 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void CKoopa::Render()
 {
 	int aniId= ID_ANI_KOOPA_WALKING_LEFT;
-	if (state == KOOPA_STATE_WALKING ||state== PARAKOOPA_STATE_JUMP)
-	{
-		if(vx<0) aniId = ID_ANI_KOOPA_WALKING_LEFT;
-		else aniId = ID_ANI_KOOPA_WALKING_RIGHT;
+	if (!isOverturned) {
+		if (state == KOOPA_STATE_WALKING || state == PARAKOOPA_STATE_JUMP)
+		{
+			if (vx < 0) aniId = ID_ANI_KOOPA_WALKING_LEFT;
+			else aniId = ID_ANI_KOOPA_WALKING_RIGHT;
+		}
+		else if (state == KOOPA_STATE_SHELL || state == KOOPA_STATE_HELD_BY)
+		{
+			aniId = ID_ANI_KOOPA_SHELL;
+			if (GetTickCount64() - shell_start > KOOPA_RETURN_WALKING_TIME)
+				aniId = ID_ANI_KOOPA_RETURN_WALKING;
+		}
+		else if (state == KOOPA_STATE_SHELL_SPIN)
+		{
+			aniId = ID_ANI_KOOPA_SHELL_SPIN;
+		}
+		else if (state == KOOPA_STATE_DIE_SHELL_OVERTURNED)
+		{
+			aniId = ID_ANI_KOOPA_OVERTURNED_SHELL;
+		}
 	}
-	else if(state == KOOPA_STATE_SHELL|| state == KOOPA_STATE_HELD_BY)
+	else
 	{
-		aniId = ID_ANI_KOOPA_SHELL;
-		if(GetTickCount64() - shell_start > KOOPA_RETURN_WALKING_TIME)
-			aniId = ID_ANI_KOOPA_RETURN_WALKING;
+		if (state == KOOPA_STATE_SHELL || state == KOOPA_STATE_HELD_BY)
+		{
+			aniId = ID_ANI_KOOPA_OVERTURNED_SHELL;
+			if (GetTickCount64() - shell_start > KOOPA_RETURN_WALKING_TIME)
+				aniId = ID_ANI_KOOPA_OVERTURNED_RETURN_WALKING;
+		}
+		else if (state == KOOPA_STATE_SHELL_SPIN)
+		{
+			aniId = ID_ANI_KOOPA_OVERTURNED_SHELL_SPIN;
+		}
+		else if (state == KOOPA_STATE_DIE_SHELL_OVERTURNED)
+		{
+			aniId = ID_ANI_KOOPA_OVERTURNED_SHELL;
+		}
 	}
-	else if (state == KOOPA_STATE_SHELL_SPIN)
-	{
-		aniId = ID_ANI_KOOPA_SHELL_SPIN;
-	}
-	else if (state == KOOPA_STATE_SHELL_OVERTURNED)
-	{
-		aniId = ID_ANI_KOOPA_OVERTURNED_SHELL;
-	}
-
 	if (type == 1) 
 		aniId += ID_ANI_KOOPA_RED;
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
@@ -177,11 +196,13 @@ void CKoopa::SetState(int state)
 		shell_start = GetTickCount64();
 		vx = 0;
 		vy = 0;
+		ay = KOOPA_GRAVITY;
 		break;
 	case KOOPA_STATE_WALKING:
 		y -= (KOOPA_BBOX_HEIGHT - KOOPA_BBOX_SHELL_HEIGHT) / 2;
 		vx = -KOOPA_WALKING_SPEED;
 		ay = KOOPA_GRAVITY;
+		isOverturned = false;
 		break;
 	case KOOPA_STATE_SHELL_SPIN:
 		vx = -KOOPA_WALKING_SPEED * 3;
@@ -190,9 +211,9 @@ void CKoopa::SetState(int state)
 	case KOOPA_STATE_HELD_BY:
 		ay = 0;
 		break;
-	case KOOPA_STATE_SHELL_OVERTURNED:
+	case KOOPA_STATE_DIE_SHELL_OVERTURNED:
 		vx = 0;
-		vy -= KOOPA_OVERTURNE_SPEED_Y;
+		vy -= KOOPA_DIE_OVERTURNED_DEFLECT_Y;
 		ay = KOOPA_GRAVITY;
 		break;
 	}

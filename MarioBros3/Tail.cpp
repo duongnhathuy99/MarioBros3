@@ -40,7 +40,7 @@ void CTail::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 	if (state == TAIL_STATE_ATTACK_BACK || state == TAIL_STATE_ATTACK_FRONT)
-		goomba->SetState(GOOMBA_STATE_OVERTURNED);
+		goomba->SetState(GOOMBA_STATE_DIE_OVERTURNED);
 }
 void CTail::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 {
@@ -53,7 +53,10 @@ void CTail::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
 	if (state == TAIL_STATE_ATTACK_BACK || state == TAIL_STATE_ATTACK_FRONT)
-		koopa->SetState(KOOPA_STATE_SHELL_OVERTURNED);
+	{
+		koopa->AttackedByTail();
+		koopa->SetSpeed(-KOOPA_OVERTURNED_DEFLECT_X * e->nx, -KOOPA_OVERTURNED_DEFLECT_Y);
+	}
 }
 void CTail::OnCollisionWithPiranhaPlant(LPCOLLISIONEVENT e)
 {

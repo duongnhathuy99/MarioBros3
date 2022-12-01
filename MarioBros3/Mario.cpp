@@ -108,7 +108,7 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 		{
 			MarioByAttacked();
 		}
-		else if (e->nx != 0 && koopa->GetState() == KOOPA_STATE_SHELL)
+		else if (e->nx != 0 && (koopa->GetState() == KOOPA_STATE_SHELL))
 		{
 			if (state == MARIO_STATE_RUNNING_RIGHT || state == MARIO_STATE_RUNNING_LEFT) {
 				ishold = true;
@@ -118,9 +118,7 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 			else {
 				StartKick();
 				koopa->SetState(KOOPA_STATE_SHELL_SPIN);
-				if (e->nx < 0)
-					koopa->SetSpeed(KOOPA_WALKING_SPEED * 3, 0);
-				else if ((e->nx > 0)) koopa->SetSpeed(-KOOPA_WALKING_SPEED * 3, 0);
+				koopa->SetSpeed(-KOOPA_WALKING_SPEED * 3 * e->nx, 0);
 			}
 		}
 	}
@@ -334,7 +332,7 @@ void CMario::SetState(int state)
 {
 	// DIE is the end state, cannot be changed! 
 	if (this->state == MARIO_STATE_DIE) return; 
-	DebugOut(L"state: %d\n", state);
+	//DebugOut(L"state: %d\n", state);
 	switch (state)
 	{
 	case MARIO_STATE_RUNNING_RIGHT:
@@ -481,7 +479,7 @@ void CMario::MarioByAttacked() {
 void CMario::handleHoldKoopa() {
 	if (ishold) {
 
-		if (holdKoopa->GetState() == KOOPA_STATE_WALKING|| holdKoopa->GetState()== KOOPA_STATE_SHELL_OVERTURNED)
+		if (holdKoopa->GetState() == KOOPA_STATE_WALKING|| holdKoopa->GetState()== KOOPA_STATE_DIE_SHELL_OVERTURNED)
 		{
 			ishold = false;
 		}

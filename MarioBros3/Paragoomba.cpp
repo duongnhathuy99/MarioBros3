@@ -31,7 +31,7 @@ void  CParagoomba::OnCollisionWith(LPCOLLISIONEVENT e) {
 }
 void CParagoomba::Render()
 {
-	if (isWingOpen && health == HEALTH_PARAGOOMBA) {
+	if (isWingOpen && health == HEALTH_PARAGOOMBA ) {
 		CAnimations::GetInstance()->Get(ID_ANI_WING_OPEN_LEFT)->Render(x - 5, y - 8);
 		CAnimations::GetInstance()->Get(ID_ANI_WING_OPEN_RIGHT)->Render(x + 5, y - 8);
 	}
