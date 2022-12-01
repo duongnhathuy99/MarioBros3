@@ -20,6 +20,7 @@
 
 #define MARIO_JUMP_DEFLECT_SPEED  0.4f
 
+#pragma region MARIO_STATE
 #define MARIO_STATE_DIE				-10
 #define MARIO_STATE_IDLE			0
 #define MARIO_STATE_WALKING_RIGHT	100
@@ -34,6 +35,9 @@
 #define MARIO_STATE_SIT				600
 #define MARIO_STATE_SIT_RELEASE		601
 
+#define MARIO_STATE_HOLD			700
+#define MARIO_STATE_HOLD_RELEASE	701
+#pragma endregion
 
 #pragma region ANIMATION_ID
 
@@ -73,15 +77,15 @@
 #define ID_ANI_MARIO_ATTACK_RIGHT 210
 #define ID_ANI_MARIO_ATTACK_LEFT 211
 
+#define ID_ANI_MARIO_TAIL_BACK 220
+#define ID_ANI_MARIO_TAIL_FRONT 221
+
 #define DISTANCE_ID_ANI_MARIO 1000
 #define ID_ANI_MARIO_DIE 999
 
 #pragma endregion
 
 #define GROUND_Y 160.0f
-
-
-
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2

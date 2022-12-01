@@ -7,7 +7,7 @@
 
 CTail::CTail(float x, float y) :CGameObject(x, y)
 {
-	SetState(TAIL_STATE_ATTACK_INEFFICIENT);
+	SetState(TAIL_STATE_INEFFICIENT);
 }
 
 void CTail::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -82,7 +82,11 @@ void CTail::SetState(int state)
 		break;
 	case TAIL_STATE_ATTACK_FRONT:
 		break;
-	case TAIL_STATE_ATTACK_INEFFICIENT:
+	case TAIL_STATE_IDLE_BACK:
+		break;
+	case TAIL_STATE_IDLE_FRONT:
+		break;
+	case TAIL_STATE_INEFFICIENT:
 		break;
 	}
 }

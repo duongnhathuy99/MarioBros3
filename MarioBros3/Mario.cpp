@@ -37,7 +37,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	
 	isOnPlatform = false;
-	DebugOutTitle(L"count object:%d", coObjects->size());
+	//DebugOutTitle(L"count object:%d", coObjects->size());
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	handleTail(dt);
 	handleHoldKoopa();
@@ -276,8 +276,21 @@ int CMario::GetAniId()
 	}
 	if (isAttack)
 	{
-		if (nx > 0) aniId = ID_ANI_MARIO_ATTACK_RIGHT;
-		else aniId = ID_ANI_MARIO_ATTACK_LEFT;
+		if (tail->GetState() == TAIL_STATE_IDLE_BACK)
+			aniId = ID_ANI_MARIO_TAIL_BACK;
+		else if (tail->GetState() == TAIL_STATE_IDLE_FRONT)
+			aniId = ID_ANI_MARIO_TAIL_FRONT;
+		else if (tail->GetState() == TAIL_STATE_ATTACK_BACK)
+		{
+			if (nx < 0) aniId = ID_ANI_MARIO_ATTACK_RIGHT;
+			else aniId = ID_ANI_MARIO_ATTACK_LEFT;
+		}
+		else if (tail->GetState() == TAIL_STATE_ATTACK_FRONT)
+		{
+			if (nx > 0) aniId = ID_ANI_MARIO_ATTACK_RIGHT;
+			else aniId = ID_ANI_MARIO_ATTACK_LEFT;
+		}
+		
 	}
 	if (aniId == -1) aniId = ID_ANI_MARIO_IDLE_RIGHT;
 
@@ -300,11 +313,15 @@ void CMario::Render()
 	else if (level == MARIO_LEVEL_RACCOON)
 		aniId = GetAniId() + level  * DISTANCE_ID_ANI_MARIO;
 
-	if(level == MARIO_LEVEL_RACCOON )
-		if(nx>0 )
-			animations->Get(aniId)->Render(x - MARIO_RACCOON_WIDTH_ADJUST, y);
+	if (level == MARIO_LEVEL_RACCOON)
+	{
+		if (tail->GetState() == TAIL_STATE_ATTACK_BACK)
+			animations->Get(aniId)->Render(x - MARIO_RACCOON_WIDTH_ADJUST * (-nx), y);
+		else if ((tail->GetState() == TAIL_STATE_IDLE_BACK || tail->GetState() == TAIL_STATE_IDLE_FRONT)&& isAttack)
+			animations->Get(aniId)->Render(x, y);
 		else
-			animations->Get(aniId)->Render(x + MARIO_RACCOON_WIDTH_ADJUST, y);
+			animations->Get(aniId)->Render(x - MARIO_RACCOON_WIDTH_ADJUST * nx, y);
+	}
 	else
 		animations->Get(aniId)->Render(x, y);
 
@@ -317,7 +334,7 @@ void CMario::SetState(int state)
 {
 	// DIE is the end state, cannot be changed! 
 	if (this->state == MARIO_STATE_DIE) return; 
-
+	DebugOut(L"state: %d\n", state);
 	switch (state)
 	{
 	case MARIO_STATE_RUNNING_RIGHT:
@@ -360,6 +377,7 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_SIT:
+		if (ishold || isAttack) break;
 		if (isOnPlatform && level != MARIO_LEVEL_SMALL)
 		{
 			state = MARIO_STATE_IDLE;
@@ -516,14 +534,14 @@ void CMario::releaseHoldKoopa() {
 }
 void CMario::handleTail(DWORD dt) {
 	if(level == MARIO_LEVEL_RACCOON)
-		tail->calculateSpeed(dt, x - 16 * nx, y + 6);
+		tail->calculateSpeed(dt, x - TAIL_DISTANCE_X_WITH_MARIO * nx, y + TAIL_DISTANCE_Y_WITH_MARIO);
 	if (isAttack) {
 		float tail_x, tail_y;
-		tail_y = y + 6;
+		tail_y = y + TAIL_DISTANCE_Y_WITH_MARIO;
 		tail_x = x;
 		if (GetTickCount64() - attack_start > MARIO_TAIL_ATTACK_TIME)
 		{
-			tail->SetState(TAIL_STATE_ATTACK_INEFFICIENT);
+			tail->SetState(TAIL_STATE_INEFFICIENT);
 			attack_start = 0;
 			isAttack = false;
 			return;
@@ -531,25 +549,27 @@ void CMario::handleTail(DWORD dt) {
 		else if (GetTickCount64() - attack_start > MARIO_TAIL_ATTACK_TIME * 3 / 4)
 		{
 			tail->SetState(TAIL_STATE_ATTACK_FRONT);
-			tail_x = x - 16 * nx;
+			tail_x = x - TAIL_DISTANCE_X_WITH_MARIO * nx;
 		}
 		else if (GetTickCount64() - attack_start > MARIO_TAIL_ATTACK_TIME * 2 / 4)
 		{
-			tail->SetState(TAIL_STATE_ATTACK_INEFFICIENT);
+			tail->SetState(TAIL_STATE_IDLE_BACK);
 			tail_x = x;
 		}
 		else if (GetTickCount64() - attack_start > MARIO_TAIL_ATTACK_TIME * 1 / 4)
 		{
 			tail->SetState(TAIL_STATE_ATTACK_BACK);
-			tail_x = x - 16 * (-nx);
+			tail_x = x - TAIL_DISTANCE_X_WITH_MARIO * (-nx);
 		}
 		tail->calculateSpeed(dt, tail_x, tail_y);
 	}
 }
 void CMario::tailAttack() {
-	if (!isAttack && level== MARIO_LEVEL_RACCOON) {
+	if (isAttack||isSitting||ishold)return;
+	if (level== MARIO_LEVEL_RACCOON) {
 		isAttack = true;
 		attack_start = GetTickCount64();
+		tail->SetState(TAIL_STATE_IDLE_FRONT);
 	}
 }
 
