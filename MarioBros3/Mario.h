@@ -13,10 +13,13 @@
 #define MARIO_ACCEL_WALK_X	0.0005f
 #define MARIO_ACCEL_RUN_X	0.0007f
 
-#define MARIO_JUMP_SPEED_Y		0.5f
-#define MARIO_JUMP_RUN_SPEED_Y	0.6f
+#define MARIO_JUMP_SPEED_Y		0.6f
+#define MARIO_JUMP_RUN_SPEED_Y	0.7f
 
-#define MARIO_GRAVITY			0.002f
+#define MARIO_SLOW_FALL_SPEED_Y		0.05f
+#define MARIO_FALL_SPEED_MAX	0.24f
+
+#define MARIO_GRAVITY			0.0018f
 
 #define MARIO_JUMP_DEFLECT_SPEED  0.4f
 
@@ -37,6 +40,8 @@
 
 #define MARIO_STATE_HOLD			700
 #define MARIO_STATE_HOLD_RELEASE	701
+
+#define MARIO_STATE_SLOW_FALL		800
 #pragma endregion
 
 #pragma region ANIMATION_ID
@@ -80,6 +85,9 @@
 #define ID_ANI_MARIO_TAIL_BACK 220
 #define ID_ANI_MARIO_TAIL_FRONT 221
 
+#define ID_ANI_MARIO_FALL_WALK_RIGHT 230
+#define ID_ANI_MARIO_FALL_WALK_LEFT 231
+
 #define DISTANCE_ID_ANI_MARIO 1000
 #define ID_ANI_MARIO_DIE 999
 
@@ -96,23 +104,22 @@
 #define MARIO_BIG_BBOX_HEIGHT 24
 #define MARIO_BIG_SITTING_BBOX_WIDTH  14
 #define MARIO_BIG_SITTING_BBOX_HEIGHT 16
+#define MARIO_SMALL_BBOX_WIDTH  13
+#define MARIO_SMALL_BBOX_HEIGHT 12
 
 #define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT-MARIO_BIG_SITTING_BBOX_HEIGHT)/2)
 #define MARIO_RACCOON_WIDTH_ADJUST 4
 
-#define MARIO_SMALL_BBOX_WIDTH  13
-#define MARIO_SMALL_BBOX_HEIGHT 12
-
-
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_KICK_TIME 150
 #define MARIO_TAIL_ATTACK_TIME 360
+#define MARIO_TAIL_SLOW_FALL_TIME 250
 
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
 	BOOLEAN isKick, ishold, isAttack;
-	float maxVx;
+	float maxVx, maxVy;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
 	CKoopa* holdKoopa;
@@ -122,6 +129,7 @@ class CMario : public CGameObject
 	ULONGLONG untouchable_start;
 	ULONGLONG kick_start;
 	ULONGLONG attack_start;
+	ULONGLONG slowFall_start;
 	BOOLEAN isOnPlatform;
 	int coin; 
 
@@ -145,6 +153,7 @@ public:
 		isAttack = false;
 		ishold = false;
 		maxVx = 0.0f;
+		maxVy = MARIO_FALL_SPEED_MAX;
 		ax = 0.0f;
 		ay = MARIO_GRAVITY; 
 
@@ -153,6 +162,7 @@ public:
 		kick_start = -1;
 		attack_start = -1;
 		untouchable_start = -1;
+		slowFall_start = -1;
 		isOnPlatform = false;
 		coin = 0;
 		tail = NULL;
@@ -178,7 +188,7 @@ public:
 	void StartKick() { isKick = true; kick_start = GetTickCount64(); }
 	void releaseHoldKoopa();
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
-
+	BOOLEAN IsOnPlatform() { return isOnPlatform; }
 	void handleTail(DWORD dt);
 	void handleHoldKoopa();
 	void tailAttack();

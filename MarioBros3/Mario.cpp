@@ -18,11 +18,12 @@
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	
+
+	DebugOutTitle(L"vx:%f   vy:%f   ax:%f   ay:%f   ", vx,vy,ax,ay);
 	vy += ay * dt;
 	vx += ax * dt;
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
-
+	if (abs(vy) > abs(maxVy) && vy>0) vy = maxVy;
 	// reset untouchable timer if untouchable time has passed
 	if ( GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME) 
 	{
@@ -35,7 +36,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		kick_start = 0;
 		isKick = false;
 	}
-	
+	//time mario slow fall
+	if (GetTickCount64() - slowFall_start < MARIO_TAIL_SLOW_FALL_TIME && !isOnPlatform)
+	{
+		vy = MARIO_SLOW_FALL_SPEED_Y;
+		ay = 0;
+	}
+	else 	ay = MARIO_GRAVITY;
 	isOnPlatform = false;
 	//DebugOutTitle(L"count object:%d", coObjects->size());
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -200,10 +207,19 @@ int CMario::GetAniId()
 			}
 			else
 			{
-				if (nx >= 0)
-					aniId = ID_ANI_MARIO_JUMP_WALK_RIGHT;
+				if (vy < 0) {
+					if (nx >= 0)
+						aniId = ID_ANI_MARIO_JUMP_WALK_RIGHT;
+					else
+						aniId = ID_ANI_MARIO_JUMP_WALK_LEFT;
+				}
 				else
-					aniId = ID_ANI_MARIO_JUMP_WALK_LEFT;
+				{
+					if (nx >= 0)
+						aniId = ID_ANI_MARIO_FALL_WALK_RIGHT;
+					else
+						aniId = ID_ANI_MARIO_FALL_WALK_LEFT;
+				}
 			}
 		}
 		else
@@ -371,7 +387,7 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_RELEASE_JUMP:
-		if (vy < 0) vy += MARIO_JUMP_SPEED_Y / 2;
+		//if (vy < 0) vy += MARIO_JUMP_SPEED_Y / 2;
 		break;
 
 	case MARIO_STATE_SIT:
@@ -393,7 +409,10 @@ void CMario::SetState(int state)
 			y -= MARIO_SIT_HEIGHT_ADJUST;
 		}
 		break;
-
+	case MARIO_STATE_SLOW_FALL:
+		if(level==MARIO_LEVEL_RACCOON)
+			slowFall_start = GetTickCount64();
+		break;
 	case MARIO_STATE_IDLE:
 		ax = 0.0f;
 		vx = 0.0f;
