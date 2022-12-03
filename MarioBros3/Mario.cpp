@@ -18,12 +18,11 @@
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-
-	DebugOutTitle(L"vx:%f   vy:%f   ax:%f   ay:%f   ", vx,vy,ax,ay);
+	//DebugOutTitle(L"vx:%f   vy:%f   ax:%f   ay:%f   nx:%d", vx,vy,ax,ay,nx);
 	vy += ay * dt;
 	vx += ax * dt;
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
-	if (abs(vy) > abs(maxVy) && vy>0) vy = maxVy;
+	if (abs(vy) > maxVy && vy>0) vy = maxVy;
 	// reset untouchable timer if untouchable time has passed
 	if ( GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME) 
 	{
@@ -257,7 +256,12 @@ int CMario::GetAniId()
 			{
 				if (!ishold) {
 					if (ax < 0)
-						aniId = ID_ANI_MARIO_SKID_RIGHT;
+					{
+						if(state == MARIO_STATE_IDLE)
+							aniId = ID_ANI_MARIO_WALKING_RIGHT;
+						else
+							aniId = ID_ANI_MARIO_SKID_RIGHT;
+					}
 					else if (ax == MARIO_ACCEL_RUN_X)
 						aniId = ID_ANI_MARIO_RUNNING_RIGHT;
 					else if (ax == MARIO_ACCEL_WALK_X)
@@ -272,7 +276,12 @@ int CMario::GetAniId()
 			{
 				if (!ishold) {
 					if (ax > 0)
-						aniId = ID_ANI_MARIO_SKID_LEFT;
+					{
+						if (state == MARIO_STATE_IDLE)
+							aniId = ID_ANI_MARIO_WALKING_LEFT;
+						else
+							aniId = ID_ANI_MARIO_SKID_LEFT;
+					}
 					else if (ax == -MARIO_ACCEL_RUN_X)
 						aniId = ID_ANI_MARIO_RUNNING_LEFT;
 					else if (ax == -MARIO_ACCEL_WALK_X)
@@ -370,7 +379,7 @@ void CMario::SetState(int state)
 		nx = 1;
 		break;
 	case MARIO_STATE_WALKING_LEFT:
-		if (isSitting) break;
+		if (isSitting)break;
 		maxVx = -MARIO_WALKING_SPEED;
 		ax = -MARIO_ACCEL_WALK_X;
 		nx = -1;
@@ -397,6 +406,7 @@ void CMario::SetState(int state)
 			state = MARIO_STATE_IDLE;
 			isSitting = true;
 			vx = 0; vy = 0.0f;
+			ax = 0; ay = 0;
 			y +=MARIO_SIT_HEIGHT_ADJUST;
 		}
 		break;
@@ -414,8 +424,14 @@ void CMario::SetState(int state)
 			slowFall_start = GetTickCount64();
 		break;
 	case MARIO_STATE_IDLE:
-		ax = 0.0f;
-		vx = 0.0f;
+		if (vx > 0)
+			ax = -MARIO_SLOW_ACCEL_WALK_X;
+		else if(vx < 0)
+			ax = MARIO_SLOW_ACCEL_WALK_X;
+		if (abs(vx) < MARIO_WALKING_SPEED_MIN) {
+			vx = 0;
+			ax = 0;
+		}
 		break;
 
 	case MARIO_STATE_DIE:

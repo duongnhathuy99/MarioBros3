@@ -54,7 +54,7 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void CLeaf::Render()
 {
 	int aniId = ID_ANI_LEAF_RIGHT;
-	if (vx < 0)
+	if (vx > 0)
 		aniId = ID_ANI_LEAF_LEFT;
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);

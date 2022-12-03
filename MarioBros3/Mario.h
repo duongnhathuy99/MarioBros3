@@ -9,12 +9,14 @@
 
 #define MARIO_WALKING_SPEED		0.1f
 #define MARIO_RUNNING_SPEED		0.2f
+#define MARIO_WALKING_SPEED_MIN		0.01f
 
 #define MARIO_ACCEL_WALK_X	0.0005f
 #define MARIO_ACCEL_RUN_X	0.0007f
+#define MARIO_SLOW_ACCEL_WALK_X	0.0002f
 
-#define MARIO_JUMP_SPEED_Y		0.6f
-#define MARIO_JUMP_RUN_SPEED_Y	0.7f
+#define MARIO_JUMP_SPEED_Y		0.5f
+#define MARIO_JUMP_RUN_SPEED_Y	0.6f
 
 #define MARIO_SLOW_FALL_SPEED_Y		0.05f
 #define MARIO_FALL_SPEED_MAX	0.24f
@@ -132,6 +134,7 @@ class CMario : public CGameObject
 	ULONGLONG slowFall_start;
 	BOOLEAN isOnPlatform;
 	int coin; 
+	int PowerMeter;
 
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
@@ -165,6 +168,7 @@ public:
 		slowFall_start = -1;
 		isOnPlatform = false;
 		coin = 0;
+		PowerMeter = 0;
 		tail = NULL;
 		holdKoopa = NULL;
 	}
