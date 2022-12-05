@@ -18,11 +18,13 @@
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	//DebugOutTitle(L"vx:%f   vy:%f   ax:%f   ay:%f   nx:%d", vx,vy,ax,ay,nx);
+	
 	vy += ay * dt;
 	vx += ax * dt;
-	if (abs(vx) > abs(maxVx)) vx = maxVx;
+	DebugOutTitle(L"vx:%f   vy:%f   ax:%f   ay:%f   nx:%d    meter:%d", vx, vy, ax, ay, abs(vx) >abs(maxVx)&& abs(maxVx)== MARIO_RUNNING_SPEED,PowerMeter);
+	if (abs(vx) > abs(maxVx) && vx*maxVx > 0) vx = maxVx;
 	if (abs(vy) > maxVy && vy>0) vy = maxVy;
+	
 	// reset untouchable timer if untouchable time has passed
 	if ( GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME) 
 	{
@@ -42,8 +44,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		ay = 0;
 	}
 	else 	ay = MARIO_GRAVITY;
+	//time mario fly
+	if (GetTickCount64() - fly_start > MARIO_FLY_TIME && isfly)
+	{
+		isfly = false;
+		PowerMeter = 0;
+	}
 	isOnPlatform = false;
-	//DebugOutTitle(L"count object:%d", coObjects->size());
+	calculatePowerMeter();
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	handleTail(dt);
 	handleHoldKoopa();
@@ -197,12 +205,21 @@ int CMario::GetAniId()
 	if (!isOnPlatform)
 	{
 		if (!ishold) {
-			if (abs(ax) == MARIO_ACCEL_RUN_X)
+			if (PowerMeter==7)
 			{
-				if (nx >= 0)
-					aniId = ID_ANI_MARIO_JUMP_RUN_RIGHT;
+				if (vy < 0) {
+					if (nx >= 0)
+						aniId = ID_ANI_MARIO_JUMP_RUN_RIGHT;
+					else
+						aniId = ID_ANI_MARIO_JUMP_RUN_LEFT;
+				}
 				else
-					aniId = ID_ANI_MARIO_JUMP_RUN_LEFT;
+				{
+					if (nx >= 0)
+						aniId = ID_ANI_MARIO_FALL_RUN_RIGHT;
+					else
+						aniId = ID_ANI_MARIO_FALL_RUN_LEFT;
+				}
 			}
 			else
 			{
@@ -262,10 +279,12 @@ int CMario::GetAniId()
 						else
 							aniId = ID_ANI_MARIO_SKID_RIGHT;
 					}
-					else if (ax == MARIO_ACCEL_RUN_X)
-						aniId = ID_ANI_MARIO_RUNNING_RIGHT;
-					else if (ax == MARIO_ACCEL_WALK_X)
+					else if (vx <= MARIO_WALKING_SPEED)
 						aniId = ID_ANI_MARIO_WALKING_RIGHT;
+					else if ( MARIO_WALKING_SPEED < vx && vx < MARIO_RUNNING_SPEED)
+						aniId = ID_ANI_MARIO_WALKING_FAST_RIGHT;
+					else if (vx >= MARIO_RUNNING_SPEED)
+						aniId = ID_ANI_MARIO_RUNNING_RIGHT;
 				}
 				else if(ax < 0)
 					aniId = ID_ANI_MARIO_HOLD_WALK_LEFT;
@@ -282,10 +301,12 @@ int CMario::GetAniId()
 						else
 							aniId = ID_ANI_MARIO_SKID_LEFT;
 					}
-					else if (ax == -MARIO_ACCEL_RUN_X)
-						aniId = ID_ANI_MARIO_RUNNING_LEFT;
-					else if (ax == -MARIO_ACCEL_WALK_X)
+					else if (abs(vx) <= MARIO_WALKING_SPEED)
 						aniId = ID_ANI_MARIO_WALKING_LEFT;
+					else if (MARIO_WALKING_SPEED < abs(vx) && abs(vx) < MARIO_RUNNING_SPEED)
+						aniId = ID_ANI_MARIO_WALKING_FAST_LEFT;
+					else if (abs(vx) >= MARIO_RUNNING_SPEED)
+						aniId = ID_ANI_MARIO_RUNNING_LEFT;
 				}
 				else if (ax > 0)
 					aniId = ID_ANI_MARIO_HOLD_WALK_RIGHT;
@@ -358,17 +379,24 @@ void CMario::SetState(int state)
 	// DIE is the end state, cannot be changed! 
 	if (this->state == MARIO_STATE_DIE) return; 
 	//DebugOut(L"state: %d\n", state);
+
+	DebugOut(L"state: %d\n", state);
 	switch (state)
 	{
 	case MARIO_STATE_RUNNING_RIGHT:
 		if (isSitting) break;
+		
 		maxVx = MARIO_RUNNING_SPEED;
+		if (vx < 0) ax = MARIO_ACCEL_RUN_X * 3;
+		else
 		ax = MARIO_ACCEL_RUN_X;
 		nx = 1;
 		break;
 	case MARIO_STATE_RUNNING_LEFT:
 		if (isSitting) break;
 		maxVx = -MARIO_RUNNING_SPEED;
+		if (vx > 0) ax = -MARIO_ACCEL_RUN_X * 3;
+		else
 		ax = -MARIO_ACCEL_RUN_X;
 		nx = -1;
 		break;
@@ -433,7 +461,14 @@ void CMario::SetState(int state)
 			ax = 0;
 		}
 		break;
-
+	case MARIO_STATE_FLY:
+		if (level == MARIO_LEVEL_RACCOON)
+		{
+			if(!isfly) fly_start = GetTickCount64();
+			isfly = true;
+			vy = -MARIO_FLY_SPEED_Y;
+		}
+		break;
 	case MARIO_STATE_DIE:
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
 		vx = 0;

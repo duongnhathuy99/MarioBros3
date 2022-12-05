@@ -7,16 +7,17 @@
 #include "Tail.h"
 #include "debug.h"
 
-#define MARIO_WALKING_SPEED		0.1f
+#define MARIO_WALKING_SPEED		0.08f
 #define MARIO_RUNNING_SPEED		0.2f
 #define MARIO_WALKING_SPEED_MIN		0.01f
 
-#define MARIO_ACCEL_WALK_X	0.0005f
-#define MARIO_ACCEL_RUN_X	0.0007f
-#define MARIO_SLOW_ACCEL_WALK_X	0.0002f
+#define MARIO_ACCEL_WALK_X	0.0002f
+#define MARIO_ACCEL_RUN_X	0.0001f
+#define MARIO_SLOW_ACCEL_WALK_X	0.00015f
 
 #define MARIO_JUMP_SPEED_Y		0.5f
 #define MARIO_JUMP_RUN_SPEED_Y	0.6f
+#define MARIO_FLY_SPEED_Y		0.4f
 
 #define MARIO_SLOW_FALL_SPEED_Y		0.05f
 #define MARIO_FALL_SPEED_MAX	0.24f
@@ -44,6 +45,7 @@
 #define MARIO_STATE_HOLD_RELEASE	701
 
 #define MARIO_STATE_SLOW_FALL		800
+#define MARIO_STATE_FLY				900
 #pragma endregion
 
 #pragma region ANIMATION_ID
@@ -90,6 +92,12 @@
 #define ID_ANI_MARIO_FALL_WALK_RIGHT 230
 #define ID_ANI_MARIO_FALL_WALK_LEFT 231
 
+#define ID_ANI_MARIO_WALKING_FAST_RIGHT 240
+#define ID_ANI_MARIO_WALKING_FAST_LEFT 241
+
+#define ID_ANI_MARIO_FALL_RUN_RIGHT 250
+#define ID_ANI_MARIO_FALL_RUN_LEFT 251
+
 #define DISTANCE_ID_ANI_MARIO 1000
 #define ID_ANI_MARIO_DIE 999
 
@@ -116,11 +124,13 @@
 #define MARIO_KICK_TIME 150
 #define MARIO_TAIL_ATTACK_TIME 360
 #define MARIO_TAIL_SLOW_FALL_TIME 250
+#define POWER_METER_TIME 200
+#define MARIO_FLY_TIME 6000
 
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
-	BOOLEAN isKick, ishold, isAttack;
+	BOOLEAN isKick, ishold, isAttack, isfly;
 	float maxVx, maxVy;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
@@ -132,6 +142,8 @@ class CMario : public CGameObject
 	ULONGLONG kick_start;
 	ULONGLONG attack_start;
 	ULONGLONG slowFall_start;
+	ULONGLONG powerMeter_start;
+	ULONGLONG fly_start;
 	BOOLEAN isOnPlatform;
 	int coin; 
 	int PowerMeter;
@@ -155,6 +167,7 @@ public:
 		isKick = false;
 		isAttack = false;
 		ishold = false;
+		isfly = false;
 		maxVx = 0.0f;
 		maxVy = MARIO_FALL_SPEED_MAX;
 		ax = 0.0f;
@@ -166,6 +179,8 @@ public:
 		attack_start = -1;
 		untouchable_start = -1;
 		slowFall_start = -1;
+		powerMeter_start = GetTickCount64();
+		fly_start = -1;
 		isOnPlatform = false;
 		coin = 0;
 		PowerMeter = 0;
@@ -193,7 +208,39 @@ public:
 	void releaseHoldKoopa();
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	BOOLEAN IsOnPlatform() { return isOnPlatform; }
+	BOOLEAN IsAbleFly() {
+		if (level == MARIO_LEVEL_RACCOON) return PowerMeter == 7; else return false; }
 	void handleTail(DWORD dt);
 	void handleHoldKoopa();
 	void tailAttack();
+	void calculatePowerMeter()
+	{
+		if (!isfly) {
+			if (vx * ax > 0) {
+				if (abs(vx) > MARIO_WALKING_SPEED) {
+					if (GetTickCount64() - powerMeter_start > POWER_METER_TIME)
+					{
+						powerMeter_start = GetTickCount64();
+						if (PowerMeter < 7)PowerMeter++;
+					}
+				}
+				else
+				{
+					if (GetTickCount64() - powerMeter_start > POWER_METER_TIME * 2)
+					{
+						powerMeter_start = GetTickCount64();
+						if (PowerMeter > 0) PowerMeter--;
+					}
+				}
+			}
+			else
+			{
+				if (GetTickCount64() - powerMeter_start > POWER_METER_TIME * 2)
+				{
+					powerMeter_start = GetTickCount64();
+					if (PowerMeter > 0)PowerMeter--;
+				}
+			}
+		}
+	};
 };

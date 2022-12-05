@@ -17,10 +17,14 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		mario->SetState(MARIO_STATE_SIT);
 		break;
 	case DIK_S:
-		if(mario->IsOnPlatform())
-			mario->SetState(MARIO_STATE_JUMP);
-		else
-			mario->SetState(MARIO_STATE_SLOW_FALL);
+		if(mario->IsAbleFly())
+			mario->SetState(MARIO_STATE_FLY);
+		else {
+			if (mario->IsOnPlatform())
+				mario->SetState(MARIO_STATE_JUMP);
+			else
+				mario->SetState(MARIO_STATE_SLOW_FALL);
+		}
 		break;
 	case DIK_1:
 		mario->SetLevel(MARIO_LEVEL_SMALL);
