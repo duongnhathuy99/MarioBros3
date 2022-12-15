@@ -1,9 +1,9 @@
 #pragma once
 #include "GameObject.h"
-#define KOOPA_GRAVITY 0.0005f
+#define KOOPA_GRAVITY 0.001f
 #define KOOPA_WALKING_SPEED 0.05f
-#define KOOPA_DIE_OVERTURNED_DEFLECT_Y 0.1f
-#define KOOPA_OVERTURNED_DEFLECT_Y 0.2f
+#define KOOPA_DIE_OVERTURNED_DEFLECT_Y 0.15f
+#define KOOPA_OVERTURNED_DEFLECT_Y 0.28f
 #define KOOPA_OVERTURNED_DEFLECT_X 0.07f
 
 #define KOOPA_BBOX_HEIGHT 24
@@ -38,6 +38,7 @@ class CKoopa : public CGameObject
 protected:
 	float ax;
 	float ay;
+	BOOLEAN isOnPlatform;
 	BOOLEAN isHeldBy;
 	BOOLEAN isOverturned;
 	ULONGLONG shell_start;
@@ -55,7 +56,6 @@ protected:
 	virtual void OnNoCollision(DWORD dt);
 
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
-	void OnCollisionWitSemiSolidPlatform(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e);
@@ -65,6 +65,7 @@ public:
 	{
 		this->ax = 0;
 		this->ay = KOOPA_GRAVITY;
+		this->isOnPlatform = false;
 		shell_start = -1;
 		SetState(KOOPA_STATE_WALKING);
 		this->isHeldBy = false;

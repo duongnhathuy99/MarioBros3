@@ -1,7 +1,6 @@
 #include "Koopa.h"
 #include "debug.h"
 
-#include "SemisolidPlatform.h"
 #include "Goomba.h"
 #include "QuestionBrick.h"
 #include "Koopa.h"
@@ -28,8 +27,14 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 void CKoopa::OnNoCollision(DWORD dt)
 {
 	if (state == KOOPA_STATE_HELD_BY)return;
+	if (state == KOOPA_STATE_WALKING && isOnPlatform)
+	{
+		vy = 0;
+		vx = -vx;
+	}
 	x += vx * dt;
 	y += vy * dt;
+	isOnPlatform = false;
 };
 
 void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -39,18 +44,15 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		if (e->ny != 0)
 		{
 			vy = 0;
-			if(e->ny < 0 && isOverturned && state == KOOPA_STATE_SHELL)vx=0;
+			if(e->ny < 0 && isOverturned && state == KOOPA_STATE_SHELL)	vx = 0;
+			if ((e->ny < 0) && state == KOOPA_STATE_WALKING && type == 1)	isOnPlatform = true;
 		}
 		else if (e->nx != 0)
 		{
 			vx = -vx;
 		}
 	}
-	if (dynamic_cast<CSemisolidPlatform*>(e->obj) )
-	{
-		OnCollisionWitSemiSolidPlatform(e);
-	}
-	else if (dynamic_cast<CGoomba*>(e->obj))
+	if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
 	else if (dynamic_cast<CQuestionBrick*>(e->obj))
 		OnCollisionWithQuestionBrick(e);
@@ -58,24 +60,6 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithKoopa(e);
 	else if (dynamic_cast<CPiranhaPlant*>(e->obj))
 		OnCollisionWithPiranhaPlant(e);
-}
-void CKoopa::OnCollisionWitSemiSolidPlatform(LPCOLLISIONEVENT e)
-{
-	if ((e->ny < 0) && state == KOOPA_STATE_WALKING && type==1)
-	{
-		float l, t, r, b;
-		e->obj->GetBoundingBox(l, t, r, b);
-		if (x < l)
-		{
-			x = l;
-			vx = -vx;
-		}
-		if (x > r)
-		{
-			x = r;
-			vx = -vx;
-		}
-	}
 }
 void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
@@ -130,6 +114,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	vy += ay * dt;
 	vx += ax * dt;
+	
 	if ((state == KOOPA_STATE_SHELL||state == KOOPA_STATE_HELD_BY) && (GetTickCount64() - shell_start > KOOPA_SHELL_TIMEOUT))
 	{
 		SetState(KOOPA_STATE_WALKING);
