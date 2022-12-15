@@ -21,7 +21,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	
 	vy += ay * dt;
 	vx += ax * dt;
-	DebugOutTitle(L"vx:%f   vy:%f   ax:%f   ay:%f   nx:%d    meter:%d", vx, vy, ax, ay, abs(vx) >abs(maxVx)&& abs(maxVx)== MARIO_RUNNING_SPEED,PowerMeter);
+	//DebugOutTitle(L"vx:%f   vy:%f   ax:%f   ay:%f   nx:%d    meter:%d", vx, vy, ax, ay, abs(vx) >abs(maxVx)&& abs(maxVx)== MARIO_RUNNING_SPEED,PowerMeter);
 	if (abs(vx) > abs(maxVx) && vx*maxVx > 0) vx = maxVx;
 	if (abs(vy) > maxVy && vy>0) vy = maxVy;
 	
@@ -379,13 +379,10 @@ void CMario::SetState(int state)
 	// DIE is the end state, cannot be changed! 
 	if (this->state == MARIO_STATE_DIE) return; 
 	//DebugOut(L"state: %d\n", state);
-
-	DebugOut(L"state: %d\n", state);
 	switch (state)
 	{
 	case MARIO_STATE_RUNNING_RIGHT:
 		if (isSitting) break;
-		
 		maxVx = MARIO_RUNNING_SPEED;
 		if (vx < 0) ax = MARIO_ACCEL_RUN_X * 3;
 		else
@@ -403,12 +400,16 @@ void CMario::SetState(int state)
 	case MARIO_STATE_WALKING_RIGHT:
 		if (isSitting) break;
 		maxVx = MARIO_WALKING_SPEED;
+		if (vx < 0) ax = MARIO_ACCEL_WALK_X * 3;
+		else
 		ax = MARIO_ACCEL_WALK_X;
 		nx = 1;
 		break;
 	case MARIO_STATE_WALKING_LEFT:
 		if (isSitting)break;
 		maxVx = -MARIO_WALKING_SPEED;
+		if (vx > 0) ax = -MARIO_ACCEL_WALK_X * 3;
+		else
 		ax = -MARIO_ACCEL_WALK_X;
 		nx = -1;
 		break;
@@ -424,7 +425,8 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_RELEASE_JUMP:
-		//if (vy < 0) vy += MARIO_JUMP_SPEED_Y / 2;
+		//if (vy < 0) vy += MARIO_JUMP_SPEED_Y / 4;
+		if (vy < 0) vy /= 1.6f;
 		break;
 
 	case MARIO_STATE_SIT:
@@ -640,4 +642,33 @@ void CMario::tailAttack() {
 		tail->SetState(TAIL_STATE_IDLE_FRONT);
 	}
 }
-
+void CMario::calculatePowerMeter()
+{
+	if (!isfly) {
+		if (vx * ax > 0) {
+			if (abs(vx) > MARIO_WALKING_SPEED) {
+				if (GetTickCount64() - powerMeter_start > POWER_METER_TIME)
+				{
+					powerMeter_start = GetTickCount64();
+					if (PowerMeter < 7)PowerMeter++;
+				}
+			}
+			else
+			{
+				if (GetTickCount64() - powerMeter_start > POWER_METER_TIME * 2)
+				{
+					powerMeter_start = GetTickCount64();
+					if (PowerMeter > 0) PowerMeter--;
+				}
+			}
+		}
+		else
+		{
+			if (GetTickCount64() - powerMeter_start > POWER_METER_TIME * 2)
+			{
+				powerMeter_start = GetTickCount64();
+				if (PowerMeter > 0)PowerMeter--;
+			}
+		}
+	}
+}

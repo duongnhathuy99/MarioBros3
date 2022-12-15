@@ -7,24 +7,24 @@
 #include "Tail.h"
 #include "debug.h"
 
-#define MARIO_WALKING_SPEED		0.08f
+#define MARIO_WALKING_SPEED		0.12f
 #define MARIO_RUNNING_SPEED		0.2f
 #define MARIO_WALKING_SPEED_MIN		0.01f
 
 #define MARIO_ACCEL_WALK_X	0.0002f
 #define MARIO_ACCEL_RUN_X	0.0001f
-#define MARIO_SLOW_ACCEL_WALK_X	0.00015f
+#define MARIO_SLOW_ACCEL_WALK_X	0.00016f
 
-#define MARIO_JUMP_SPEED_Y		0.5f
-#define MARIO_JUMP_RUN_SPEED_Y	0.6f
+#define MARIO_JUMP_SPEED_Y		0.4f
+#define MARIO_JUMP_RUN_SPEED_Y	0.5f
 #define MARIO_FLY_SPEED_Y		0.4f
 
 #define MARIO_SLOW_FALL_SPEED_Y		0.05f
 #define MARIO_FALL_SPEED_MAX	0.24f
 
-#define MARIO_GRAVITY			0.0018f
+#define MARIO_GRAVITY			0.001f
 
-#define MARIO_JUMP_DEFLECT_SPEED  0.4f
+#define MARIO_JUMP_DEFLECT_SPEED  0.3f
 
 #pragma region MARIO_STATE
 #define MARIO_STATE_DIE				-10
@@ -213,34 +213,5 @@ public:
 	void handleTail(DWORD dt);
 	void handleHoldKoopa();
 	void tailAttack();
-	void calculatePowerMeter()
-	{
-		if (!isfly) {
-			if (vx * ax > 0) {
-				if (abs(vx) > MARIO_WALKING_SPEED) {
-					if (GetTickCount64() - powerMeter_start > POWER_METER_TIME)
-					{
-						powerMeter_start = GetTickCount64();
-						if (PowerMeter < 7)PowerMeter++;
-					}
-				}
-				else
-				{
-					if (GetTickCount64() - powerMeter_start > POWER_METER_TIME * 2)
-					{
-						powerMeter_start = GetTickCount64();
-						if (PowerMeter > 0) PowerMeter--;
-					}
-				}
-			}
-			else
-			{
-				if (GetTickCount64() - powerMeter_start > POWER_METER_TIME * 2)
-				{
-					powerMeter_start = GetTickCount64();
-					if (PowerMeter > 0)PowerMeter--;
-				}
-			}
-		}
-	};
+	void calculatePowerMeter();
 };
