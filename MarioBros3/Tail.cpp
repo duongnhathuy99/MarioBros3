@@ -1,5 +1,6 @@
 #include "Tail.h"
 #include "Goomba.h"
+#include "Brick.h"
 #include "QuestionBrick.h"
 #include "Koopa.h"
 #include "PiranhaPlant.h"
@@ -30,6 +31,8 @@ void CTail::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithGoomba(e);
 	else if (dynamic_cast<CQuestionBrick*>(e->obj))
 		OnCollisionWithQuestionBrick(e);
+	else if (dynamic_cast<CBrick*>(e->obj))
+		OnCollisionWithBrick(e);
 	else if (dynamic_cast<CKoopa*>(e->obj))
 		OnCollisionWithKoopa(e);
 	else if (dynamic_cast<CPiranhaPlant*>(e->obj))
@@ -48,6 +51,12 @@ void CTail::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 
 	if (state == TAIL_STATE_ATTACK_BACK && questBrick->GetState() == QUESTION_BRICK_STATE_ITEM)
 		questBrick->SetState(QUESTION_BRICK_STATE_MOVEUP);
+}
+void CTail::OnCollisionWithBrick(LPCOLLISIONEVENT e)
+{
+	CBrick* brick = dynamic_cast<CBrick*>(e->obj);
+	if (state == TAIL_STATE_ATTACK_BACK )
+		brick->Delete();
 }
 void CTail::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {

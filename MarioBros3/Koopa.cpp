@@ -3,6 +3,7 @@
 
 #include "Goomba.h"
 #include "QuestionBrick.h"
+#include "Brick.h"
 #include "Koopa.h"
 #include "PiranhaPlant.h"
 
@@ -54,6 +55,8 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	}
 	if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
+	else if (dynamic_cast<CBrick*>(e->obj))
+		OnCollisionWithBrick(e);
 	else if (dynamic_cast<CQuestionBrick*>(e->obj))
 		OnCollisionWithQuestionBrick(e);
 	else if (dynamic_cast<CKoopa*>(e->obj))
@@ -81,6 +84,15 @@ void CKoopa::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 	if ((e->nx != 0) && state == KOOPA_STATE_SHELL_SPIN)
 	{
 		questBrick->SetState(QUESTION_BRICK_STATE_MOVEUP);
+	}
+}
+void CKoopa::OnCollisionWithBrick(LPCOLLISIONEVENT e)
+{
+	CBrick* brick = dynamic_cast<CBrick*>(e->obj);
+
+	if ((e->nx != 0) && state == KOOPA_STATE_SHELL_SPIN)
+	{
+		brick->Delete();
 	}
 }
 void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
