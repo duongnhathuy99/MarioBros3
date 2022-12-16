@@ -2,13 +2,24 @@
 #include "PSwitches.h"
 
 #include "PlayScene.h"
+
+void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (item == 0) {
+		if (mario->IsPressPSwitches())
+			SetState(BRICK_STATE_COIN);
+		else SetState(BRICK_STATE_INITIAL);
+	}
+	//CCollision::GetInstance()->Process(this, dt, coObjects);
+};
 void CBrick::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
-	if(state== BRICK_STATE_INITIAL)
+	if(state == BRICK_STATE_INITIAL)
 		animations->Get(ID_ANI_BRICK)->Render(x, y);
-	else
+	else if (state == BRICK_STATE_UNBOX)
 		animations->Get(ID_ANI_BRICK_UNBOX)->Render(x, y);
+	else animations->Get(ID_ANI_BRICK_COIN)->Render(x, y);
 	//RenderBoundingBox();
 }
 
@@ -32,5 +43,8 @@ void CBrick::SetState(int state) {
 		}
 		else Delete();
 	break; 
+	case BRICK_STATE_COIN:
+		
+		break;
 	}
 }

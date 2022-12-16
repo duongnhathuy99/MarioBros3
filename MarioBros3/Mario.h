@@ -126,11 +126,12 @@
 #define MARIO_TAIL_SLOW_FALL_TIME 250
 #define POWER_METER_TIME 200
 #define MARIO_FLY_TIME 6000
+#define PSWITCHES_TIME 6000
 
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
-	BOOLEAN isKick, ishold, isAttack, isfly;
+	BOOLEAN isKick, ishold, isAttack, isfly, isPSwitches;
 	float maxVx, maxVy;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
@@ -144,6 +145,7 @@ class CMario : public CGameObject
 	ULONGLONG slowFall_start;
 	ULONGLONG powerMeter_start;
 	ULONGLONG fly_start;
+	ULONGLONG PSwitches_start;
 	BOOLEAN isOnPlatform;
 	int coin; 
 	int PowerMeter;
@@ -153,21 +155,25 @@ class CMario : public CGameObject
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
 	void OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e);
+	void OnCollisionWithBrick(LPCOLLISIONEVENT e);
 	void OnCollisionWithMushroom(LPCOLLISIONEVENT e);
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
 	void OnCollisionWithPiranhaPlant(LPCOLLISIONEVENT e);
 	void OnCollisionWithFireball(LPCOLLISIONEVENT e);
+	void OnCollisionWithPSwitches(LPCOLLISIONEVENT e);
 
 	int GetAniId();
 
 public:
 	CMario(float x, float y) : CGameObject(x, y)
 	{
+		isOnPlatform = false;
 		isSitting = false;
 		isKick = false;
 		isAttack = false;
 		ishold = false;
 		isfly = false;
+		isPSwitches = false;
 		maxVx = 0.0f;
 		maxVy = MARIO_FALL_SPEED_MAX;
 		ax = 0.0f;
@@ -181,7 +187,7 @@ public:
 		slowFall_start = -1;
 		powerMeter_start = GetTickCount64();
 		fly_start = -1;
-		isOnPlatform = false;
+		PSwitches_start = -1;
 		coin = 0;
 		PowerMeter = 0;
 		tail = NULL;
@@ -208,6 +214,7 @@ public:
 	void releaseHoldKoopa();
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	BOOLEAN IsOnPlatform() { return isOnPlatform; }
+	BOOLEAN IsPressPSwitches() { return isPSwitches; }
 	BOOLEAN IsAbleFly() {
 		if (level == MARIO_LEVEL_RACCOON) return PowerMeter == 7; else return false; }
 	void handleTail(DWORD dt);

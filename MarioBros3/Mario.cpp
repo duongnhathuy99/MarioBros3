@@ -8,11 +8,13 @@
 #include "Coin.h"
 #include "Portal.h"
 #include "QuestionBrick.h"
+#include "Brick.h"
 #include "Mushroom.h"
 #include "Leaf.h"
 #include "Koopa.h"
 #include "PiranhaPlant.h"
 #include "Fireball.h"
+#include "PSwitches.h"
 
 #include "Collision.h"
 
@@ -30,6 +32,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		untouchable_start = 0;	
 		untouchable = 0;
+	}
+	//time mario press P-Switches
+	if (GetTickCount64() - PSwitches_start > PSWITCHES_TIME)
+	{
+		PSwitches_start = 0;
+		isPSwitches = false;
 	}
 	//time mario kick
 	if (GetTickCount64() - kick_start > MARIO_KICK_TIME)
@@ -84,6 +92,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithPortal(e);
 	else if (dynamic_cast<CQuestionBrick*>(e->obj))
 		OnCollisionWithQuestionBrick(e);
+	else if (dynamic_cast<CBrick*>(e->obj))
+		OnCollisionWithBrick(e);
 	else if (dynamic_cast<CMushroom*>(e->obj))
 		OnCollisionWithMushroom(e);
 	else if (dynamic_cast<CLeaf*>(e->obj))
@@ -94,6 +104,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithPiranhaPlant(e);
 	else if (dynamic_cast<CFireball*>(e->obj))
 		OnCollisionWithFireball(e);
+	else if (dynamic_cast<PSwitches*>(e->obj))
+		OnCollisionWithPSwitches(e);
 }
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
@@ -167,13 +179,20 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 	e->obj->Delete();
 	coin++;
 }
-
+void CMario::OnCollisionWithBrick(LPCOLLISIONEVENT e)
+{
+	if (e->obj->GetState() == BRICK_STATE_COIN) {
+		e->obj->Delete();
+		coin++;
+	}else if(e->obj->GetState() == BRICK_STATE_INITIAL && e->ny > 0)
+		e->obj->SetState(BRICK_STATE_UNBOX);
+	
+}
 void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 {
 	CPortal* p = (CPortal*)e->obj;
 	CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
 }
-
 void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 {
 	CQuestionBrick* quesBrick = (CQuestionBrick*)e->obj;
@@ -195,7 +214,14 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 	e->obj->Delete();
 	SetLevel(MARIO_LEVEL_RACCOON);
 }
-
+void CMario::OnCollisionWithPSwitches(LPCOLLISIONEVENT e) {
+	if (e->ny < 0 && e->obj->GetState() == PSWITCHES_STATE_INITIAL)
+	{
+		e->obj->SetState(PSWITCHES_STATE_PRESS);
+		isPSwitches = true;
+		PSwitches_start = GetTickCount64();
+	}
+}
 //
 // Get animdation ID for big Mario
 //
