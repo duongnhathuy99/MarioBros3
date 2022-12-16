@@ -55,8 +55,8 @@ void CTail::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 void CTail::OnCollisionWithBrick(LPCOLLISIONEVENT e)
 {
 	CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-	if (state == TAIL_STATE_ATTACK_BACK )
-		brick->Delete();
+	if (state == TAIL_STATE_ATTACK_BACK && brick->GetState() == 1)
+		brick->SetState(BRICK_STATE_UNBOX);//brick->Delete();
 }
 void CTail::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {

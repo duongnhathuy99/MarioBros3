@@ -92,7 +92,7 @@ void CKoopa::OnCollisionWithBrick(LPCOLLISIONEVENT e)
 
 	if ((e->nx != 0) && state == KOOPA_STATE_SHELL_SPIN)
 	{
-		brick->Delete();
+		brick->SetState(BRICK_STATE_UNBOX);//brick->Delete();
 	}
 }
 void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
