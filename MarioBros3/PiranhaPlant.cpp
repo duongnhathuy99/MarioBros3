@@ -1,6 +1,6 @@
 #include "PiranhaPlant.h"
-#include "Textures.h"
 #include "debug.h"
+#include "PlayScene.h"
 
 CPiranhaPlant::CPiranhaPlant(float x, float y,int Stem,int Color) :CGameObject(x, y)
 {
@@ -31,6 +31,10 @@ void CPiranhaPlant::OnCollisionWith(LPCOLLISIONEVENT e)
 }
 void CPiranhaPlant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	LPGAME game = CGame::GetInstance();
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (mario->IsLevelChange())return;
+
 	if ((state == STATE_PRIRANHA_UP)&&startY - y > PIRANHA_BBOX+stem*STEM_BBOX_HEIGHT)
 	{
 		y = startY - (PIRANHA_BBOX + stem * STEM_BBOX_HEIGHT);

@@ -17,7 +17,7 @@ Assets\piranhaPlant.txt
 # See OBJECT_TYPE constants in AssetIDs.h
 
 # MARIO
-0	2000	300
+0	2090	300
 #COIN
 4	100	320
 4	120	320
@@ -68,8 +68,8 @@ Assets\piranhaPlant.txt
 #12	600	350	1
 #12	500	350	0
 #Koopa
-#3	2110	200	1
-#3	2050	200	1
+3	2120	200	1
+3	2050	200	1
 3	500	200	1
 #3	630	200	0
 ParaKoopa
@@ -90,9 +90,11 @@ ParaKoopa
 #Piranha Plant
 #10	336	369	2	0
 #10	320	369	2	1
+
 #Fire Piranha Plant
 #11	360	369	2	0
 #11	384	369	2	1
+
 #Pipe
 9	352	368	16	16	4	37	38	39	40
 

@@ -1,5 +1,6 @@
 #include "Goomba.h"
 
+#include "PlayScene.h"
 CGoomba::CGoomba(float x, float y, int type):CGameObject(x, y)
 {
 	this->ax = 0;
@@ -53,6 +54,9 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	LPGAME game = CGame::GetInstance();
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (mario->IsLevelChange())return;
 	vy += ay * dt;
 	vx += ax * dt;
 

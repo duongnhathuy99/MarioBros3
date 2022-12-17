@@ -33,6 +33,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		untouchable_start = 0;	
 		untouchable = 0;
 	}
+	// time level change mario idle
+	if (GetTickCount64() - levelChange_start > MARIO_LEVEL_CHANGE_TIME)
+	{
+		levelChange_start = 0;
+		isLevelChange = false;
+	}
+	if (isLevelChange)return;
 	//time mario press P-Switches
 	if (GetTickCount64() - PSwitches_start > PSWITCHES_TIME)
 	{
@@ -387,15 +394,18 @@ void CMario::Render()
 	{
 		if (tail->GetState() == TAIL_STATE_ATTACK_BACK)
 			animations->Get(aniId)->Render(x - MARIO_RACCOON_WIDTH_ADJUST * (-nx), y);
-		else if ((tail->GetState() == TAIL_STATE_IDLE_BACK || tail->GetState() == TAIL_STATE_IDLE_FRONT)&& isAttack)
+		else if ((tail->GetState() == TAIL_STATE_IDLE_BACK || tail->GetState() == TAIL_STATE_IDLE_FRONT) && isAttack)
 			animations->Get(aniId)->Render(x, y);
 		else
 			animations->Get(aniId)->Render(x - MARIO_RACCOON_WIDTH_ADJUST * nx, y);
 	}
-	else
-		animations->Get(aniId)->Render(x, y);
-
-	RenderBoundingBox();
+	else {
+		if (untouchable == 0)
+			animations->Get(aniId)->Render(x, y);
+		else if ((GetTickCount64() - untouchable_start) % 2 == 0)
+			animations->Get(aniId)->Render(x, y);
+	}
+	//RenderBoundingBox();
 	
 	//DebugOutTitle(L"Coins: %d", coin);
 }
@@ -552,6 +562,8 @@ void CMario::SetLevel(int l)
 		tail->Delete();
 		tail = NULL;
 	}
+	isLevelChange = true;
+	levelChange_start = GetTickCount64();
 	level = l;
 }
 void CMario::MarioByAttacked() {

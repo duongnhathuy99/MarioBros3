@@ -127,11 +127,11 @@
 #define POWER_METER_TIME 200
 #define MARIO_FLY_TIME 6000
 #define PSWITCHES_TIME 6000
-
+#define MARIO_LEVEL_CHANGE_TIME	500
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
-	BOOLEAN isKick, ishold, isAttack, isfly, isPSwitches;
+	BOOLEAN isKick, ishold, isAttack, isfly, isPSwitches, isLevelChange;
 	float maxVx, maxVy;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
@@ -146,6 +146,7 @@ class CMario : public CGameObject
 	ULONGLONG powerMeter_start;
 	ULONGLONG fly_start;
 	ULONGLONG PSwitches_start;
+	ULONGLONG levelChange_start;
 	BOOLEAN isOnPlatform;
 	int coin; 
 	int PowerMeter;
@@ -174,6 +175,7 @@ public:
 		ishold = false;
 		isfly = false;
 		isPSwitches = false;
+		isLevelChange = false;
 		maxVx = 0.0f;
 		maxVy = MARIO_FALL_SPEED_MAX;
 		ax = 0.0f;
@@ -188,6 +190,8 @@ public:
 		powerMeter_start = GetTickCount64();
 		fly_start = -1;
 		PSwitches_start = -1;
+		levelChange_start = -1;
+
 		coin = 0;
 		PowerMeter = 0;
 		tail = NULL;
@@ -215,6 +219,7 @@ public:
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	BOOLEAN IsOnPlatform() { return isOnPlatform; }
 	BOOLEAN IsPressPSwitches() { return isPSwitches; }
+	BOOLEAN IsLevelChange() { return isLevelChange; }
 	BOOLEAN IsAbleFly() {
 		if (level == MARIO_LEVEL_RACCOON) return PowerMeter == 7; else return false; }
 	void handleTail(DWORD dt);

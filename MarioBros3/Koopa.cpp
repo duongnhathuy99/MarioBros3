@@ -1,6 +1,7 @@
 #include "Koopa.h"
 #include "debug.h"
 
+#include "PlayScene.h"
 #include "Goomba.h"
 #include "QuestionBrick.h"
 #include "Brick.h"
@@ -124,6 +125,9 @@ void CKoopa::OnCollisionWithPiranhaPlant(LPCOLLISIONEVENT e)
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	LPGAME game = CGame::GetInstance();
+	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	if (mario->IsLevelChange())return;
 	vy += ay * dt;
 	vx += ax * dt;
 	
