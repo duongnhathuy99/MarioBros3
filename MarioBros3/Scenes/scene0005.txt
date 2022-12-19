@@ -10,6 +10,7 @@ Assets\mushroom.txt
 Assets\goomba.txt
 Assets\koopa.txt
 Assets\piranhaPlant.txt
+Assets\HUB.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -17,7 +18,7 @@ Assets\piranhaPlant.txt
 # See OBJECT_TYPE constants in AssetIDs.h
 
 # MARIO
-0	2090	300
+0	0	300
 #COIN
 4	100	320
 4	120	320
@@ -126,6 +127,18 @@ ParaKoopa
 8	512	384	16	16	6
 #Portal 
 50	300	160	216	180	1
+#######Hiden map
+#Platform
+5	1968	464	16	16	8	127	127	127
+5	2128	464	16	16	12	127	127	127
+5	2352	464	16	16	8	127	127	127
 
+5	2304	528	16	16	11	127	127	127
+5	2288	544	16	16	12	127	127	127
+5	2272	560	16	16	13	127	127	127
+5	2256	576	16	16	14	127	127	127
+5	2240	592	16	16	15	127	127	127
+5	2224	608	16	16	16	127	127	127
+5	2096	608	16	16	8	127	127	127
 [MAP]
 30	Assets/Map1.txt	42	176	11	11	16	16	0

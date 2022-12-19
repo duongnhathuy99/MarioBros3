@@ -19,6 +19,7 @@
 #include "Koopa.h"
 #include "Parakoopa.h"
 #include "Paragoomba.h"
+#include "HUB.h"
 #include "SampleKeyEventHandler.h"
 
 using namespace std;
@@ -42,6 +43,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 
 #define MAX_SCENE_LINE 1024
 Map* map;
+HUB* hub;
 void CPlayScene::_ParseSection_SPRITES(string line)
 {
 	vector<string> tokens = split(line);
@@ -342,13 +344,16 @@ void CPlayScene::Update(DWORD dt)
 	// Update camera to follow mario
 	float cx, cy;
 	player->GetPosition(cx, cy);
-
+	CMario* mario = (CMario*)player;
 	CGame *game = CGame::GetInstance();
 	cx -= game->GetBackBufferWidth() / 2;
-	cy -= game->GetBackBufferHeight() / 2;
-
+	//if (mario->IsFlying() || cy - game->GetBackBufferHeight() / 2 < 240)
+		cy -= game->GetBackBufferHeight() / 2;
+	
 	if (cx < 0) cx = 0;
 	if (cy < 0) cy = 0;
+	if (cx > 2544) cx = 2544;
+	if (cy > 240) cy = 240;
 	CGame::GetInstance()->SetCamPos(cx, cy);
 
 	PurgeDeletedObjects();
@@ -359,6 +364,7 @@ void CPlayScene::Render()
 	map->Draw();
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
+	hub->Render();
 }
 
 /*

@@ -21,3 +21,4 @@ height	240
 30	textures\Map1.png
 50	textures\enemies2.png
 60	textures\background_tiles.png
+90	textures\hud2.png

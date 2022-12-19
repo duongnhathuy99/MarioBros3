@@ -147,9 +147,9 @@ class CMario : public CGameObject
 	ULONGLONG fly_start;
 	ULONGLONG PSwitches_start;
 	ULONGLONG levelChange_start;
+	ULONGLONG Playing_time_start;
 	BOOLEAN isOnPlatform;
-	int coin; 
-	int PowerMeter;
+	int coin, health, PowerMeter, point, time;
 
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
@@ -191,9 +191,13 @@ public:
 		fly_start = -1;
 		PSwitches_start = -1;
 		levelChange_start = -1;
+		Playing_time_start = GetTickCount64();
 
 		coin = 0;
 		PowerMeter = 0;
+		point = 0;
+		health = 4;
+		time = 300;
 		tail = NULL;
 		holdKoopa = NULL;
 	}
@@ -220,10 +224,17 @@ public:
 	BOOLEAN IsOnPlatform() { return isOnPlatform; }
 	BOOLEAN IsPressPSwitches() { return isPSwitches; }
 	BOOLEAN IsLevelChange() { return isLevelChange; }
+	BOOLEAN IsFlying() { return isfly; }
 	BOOLEAN IsAbleFly() {
 		if (level == MARIO_LEVEL_RACCOON) return PowerMeter == 7; else return false; }
 	void handleTail(DWORD dt);
 	void handleHoldKoopa();
 	void tailAttack();
 	void calculatePowerMeter();
+
+	int GetCoin() { return coin; }
+	int GetPoint() { return point; }
+	int GetHealth() { return health; }
+	int GetTime() {  return time - INT((GetTickCount64() - Playing_time_start) / 1000); }
+	int GetPowerMeter() { return PowerMeter; }
 };
