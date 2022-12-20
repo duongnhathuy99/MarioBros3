@@ -98,6 +98,11 @@
 #define ID_ANI_MARIO_FALL_RUN_RIGHT 250
 #define ID_ANI_MARIO_FALL_RUN_LEFT 251
 
+#define ID_ANI_MARIO_SMALL_TO_BIG_RIGHT 260
+#define ID_ANI_MARIO_SMALL_TO_BIG_LEFT 261
+
+#define ID_ANI_MARIO_EFFECT_SMOKE 270
+
 #define DISTANCE_ID_ANI_MARIO 1000
 #define ID_ANI_MARIO_DIE 999
 
@@ -127,18 +132,18 @@
 #define POWER_METER_TIME 200
 #define MARIO_FLY_TIME 6000
 #define PSWITCHES_TIME 6000
-#define MARIO_LEVEL_CHANGE_TIME	500
+#define MARIO_LEVEL_CHANGE_TIME	600
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
-	BOOLEAN isKick, ishold, isAttack, isfly, isPSwitches, isLevelChange;
+	BOOLEAN isKick, ishold, isAttack, isfly, isPSwitches, isUntouchable;
+	int isLevelChange;
 	float maxVx, maxVy;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
 	CKoopa* holdKoopa;
 	CTail* tail;
 	int level; 
-	int untouchable; 
 	ULONGLONG untouchable_start;
 	ULONGLONG kick_start;
 	ULONGLONG attack_start;
@@ -175,14 +180,14 @@ public:
 		ishold = false;
 		isfly = false;
 		isPSwitches = false;
-		isLevelChange = false;
+		isUntouchable = false;
+		isLevelChange = 0;
 		maxVx = 0.0f;
 		maxVy = MARIO_FALL_SPEED_MAX;
 		ax = 0.0f;
 		ay = MARIO_GRAVITY; 
 
 		level = MARIO_LEVEL_BIG;
-		untouchable = 0;
 		kick_start = -1;
 		attack_start = -1;
 		untouchable_start = -1;
@@ -210,14 +215,14 @@ public:
 		return (state != MARIO_STATE_DIE); 
 	}
 
-	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable==0); }
+	int IsBlocking() { return (state != MARIO_STATE_DIE && !isUntouchable); }
 
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
 
 	void MarioByAttacked();
 	void SetLevel(int l);
-	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
+	void StartUntouchable() { isUntouchable = true; untouchable_start = GetTickCount64(); }
 	void StartKick() { isKick = true; kick_start = GetTickCount64(); }
 	void releaseHoldKoopa();
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);

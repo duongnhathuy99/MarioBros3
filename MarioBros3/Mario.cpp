@@ -31,13 +31,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if ( GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME) 
 	{
 		untouchable_start = 0;	
-		untouchable = 0;
+		isUntouchable = false;
 	}
 	// time level change mario idle
 	if (GetTickCount64() - levelChange_start > MARIO_LEVEL_CHANGE_TIME)
 	{
 		levelChange_start = 0;
-		isLevelChange = false;
+		isLevelChange = 0;
 	}
 	if (isLevelChange)return;
 	//time mario press P-Switches
@@ -65,8 +65,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		isfly = false;
 		PowerMeter = 0;
 	}
-	isOnPlatform = false;
 	calculatePowerMeter();
+	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	handleTail(dt);
 	handleHoldKoopa();
@@ -367,7 +367,15 @@ int CMario::GetAniId()
 			if (nx > 0) aniId = ID_ANI_MARIO_ATTACK_RIGHT;
 			else aniId = ID_ANI_MARIO_ATTACK_LEFT;
 		}
-		
+	}
+	if (isLevelChange!=0) {
+		if ((level == MARIO_LEVEL_SMALL && isLevelChange > 0) || (level == MARIO_LEVEL_BIG && isLevelChange < 0))
+		{
+			if (nx > 0) aniId = ID_ANI_MARIO_SMALL_TO_BIG_RIGHT;
+			else aniId = ID_ANI_MARIO_SMALL_TO_BIG_LEFT;
+		}
+		else
+			aniId = ID_ANI_MARIO_EFFECT_SMOKE;
 	}
 	if (aniId == -1) aniId = ID_ANI_MARIO_IDLE_RIGHT;
 
@@ -400,7 +408,7 @@ void CMario::Render()
 			animations->Get(aniId)->Render(x - MARIO_RACCOON_WIDTH_ADJUST * nx, y);
 	}
 	else {
-		if (untouchable == 0)
+		if (!isUntouchable)
 			animations->Get(aniId)->Render(x, y);
 		else if ((GetTickCount64() - untouchable_start) % 2 == 0)
 			animations->Get(aniId)->Render(x, y);
@@ -562,12 +570,12 @@ void CMario::SetLevel(int l)
 		tail->Delete();
 		tail = NULL;
 	}
-	isLevelChange = true;
+	isLevelChange = level-l;
 	levelChange_start = GetTickCount64();
 	level = l;
 }
 void CMario::MarioByAttacked() {
-	if (untouchable == 0)
+	if (!isUntouchable)
 	{
 		if (level > MARIO_LEVEL_BIG)
 		{
@@ -684,7 +692,7 @@ void CMario::calculatePowerMeter()
 {
 	if (!isfly) {
 		if (vx * ax > 0) {
-			if (abs(vx) > MARIO_WALKING_SPEED) {
+			if (abs(vx) > MARIO_WALKING_SPEED && isOnPlatform) {
 				if (GetTickCount64() - powerMeter_start > POWER_METER_TIME)
 				{
 					powerMeter_start = GetTickCount64();

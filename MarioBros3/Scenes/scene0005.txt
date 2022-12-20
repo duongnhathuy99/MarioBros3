@@ -1,5 +1,6 @@
 # list of object assets to load in this scene
 [ASSETS]
+Assets\effect.txt
 Assets\mario.txt
 Assets\coin.txt
 Assets\cloud.txt
