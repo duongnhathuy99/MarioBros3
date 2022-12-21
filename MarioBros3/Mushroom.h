@@ -10,7 +10,7 @@
 #define MUSHROOM_STATE_GROWUP 200
 
 //#define SPEED_MUSHROOM 0.0002f
-#define ID_ANI_MUSHROOM_WALKING 7000
+#define ID_ANI_MUSHROOM_WALKING 7004
 
 class CMushroom : public CGameObject
 {

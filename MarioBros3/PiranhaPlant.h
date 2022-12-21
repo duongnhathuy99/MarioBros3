@@ -12,8 +12,8 @@
 #define STATE_PRIRANHA_STOP 200
 #define STATE_PRIRANHA_DOWN 300
 
-#define ID_ANI_STEM 8000
-#define ID_ANI_PRIRANHA_GREEN_UP 8001
+#define ID_ANI_STEM 7300
+#define ID_ANI_PRIRANHA_GREEN_UP 7301
 
 class CPiranhaPlant : public CGameObject
 {

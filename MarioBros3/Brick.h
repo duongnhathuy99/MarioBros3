@@ -4,9 +4,9 @@
 #include "Animation.h"
 #include "Animations.h"
 
-#define ID_ANI_BRICK 10000
-#define ID_ANI_BRICK_UNBOX 6001
-#define ID_ANI_BRICK_COIN 10003
+#define ID_ANI_BRICK 9010
+#define ID_ANI_BRICK_UNBOX 9001
+#define ID_ANI_BRICK_COIN 7007
 
 #define BRICK_WIDTH 16
 #define BRICK_BBOX_WIDTH 16

@@ -2,8 +2,8 @@
 #include "Koopa.h"
 #define PARAKOOPA_SPEED_JUMP 0.25f
 
-#define ID_ANI_WING_LEFT 5402
-#define ID_ANI_WING_RIGHT 5401
+#define ID_ANI_WING_LEFT 7402
+#define ID_ANI_WING_RIGHT 7401
 
 class CParakoopa : public CKoopa
 {
