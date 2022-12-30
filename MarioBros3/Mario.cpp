@@ -15,15 +15,14 @@
 #include "PiranhaPlant.h"
 #include "Fireball.h"
 #include "PSwitches.h"
-
+#include "Pipe.h"
 #include "Collision.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	
 	vy += ay * dt;
 	vx += ax * dt;
-	//DebugOutTitle(L"vx:%f   vy:%f   ax:%f   ay:%f   nx:%d    meter:%d", vx, vy, ax, ay, abs(vx) >abs(maxVx)&& abs(maxVx)== MARIO_RUNNING_SPEED,PowerMeter);
+	DebugOutTitle(L"vx:%f   vy:%f   ax:%f   ay:%f isGoInPipe:%d", vx, vy, ax, ay, isGoInPipe);
 	if (abs(vx) > abs(maxVx) && vx*maxVx > 0) vx = maxVx;
 	if (abs(vy) > maxVy && vy>0) vy = maxVy;
 	
@@ -65,7 +64,37 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		isfly = false;
 		PowerMeter = 0;
 	}
+	//mario go in pipe
+	if (isGoInPipe)
+	{
+		ay = 0;
+		if (y - startY_GoInpipe > MARIO_BIG_BBOX_HEIGHT  && state == MARIO_STATE_GO_IN_PIPE) {
+			if (!isInHiddenMap) {
+				SetPosition(POSITION_GO_DOWN_PIPE_X, POSITION_GO_DOWN_PIPE_Y);
+				startY_GoInpipe = y;
+				isInHiddenMap = true;
+			}
+			else {
+				isGoInPipe = false;
+				startY_GoInpipe = 0;
+				ay = MARIO_GRAVITY;
+			}
+		}
+		if (startY_GoInpipe - y > MARIO_BIG_BBOX_HEIGHT && state == MARIO_STATE_GO_IN_PIPE) {
+			if (isInHiddenMap) {
+				SetPosition(POSITION_GO_UP_PIPE_X, POSITION_GO_UP_PIPE_Y);
+				startY_GoInpipe = y;
+				isInHiddenMap = false;
+			}
+			else {
+				isGoInPipe = false;
+				startY_GoInpipe = 0;
+				ay = MARIO_GRAVITY;
+			}
+		}
+	}
 	calculatePowerMeter();
+	isCollisionWithPipe = 0;
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	handleTail(dt);
@@ -113,6 +142,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithFireball(e);
 	else if (dynamic_cast<PSwitches*>(e->obj))
 		OnCollisionWithPSwitches(e);
+	else if (dynamic_cast<CPipe*>(e->obj))
+		OnCollisionWithPipe(e);
 }
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
@@ -227,6 +258,13 @@ void CMario::OnCollisionWithPSwitches(LPCOLLISIONEVENT e) {
 		e->obj->SetState(PSWITCHES_STATE_PRESS);
 		isPSwitches = true;
 		PSwitches_start = GetTickCount64();
+	}
+}
+void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e) {
+	CPipe* pipe = dynamic_cast<CPipe*>(e->obj);
+	if (e->ny != 0 && pipe->IsGoInside() )
+	{
+		isCollisionWithPipe = (int)e->ny;
 	}
 }
 //
@@ -421,8 +459,9 @@ void CMario::Render()
 void CMario::SetState(int state)
 {
 	// DIE is the end state, cannot be changed! 
+	if (isGoInPipe)	return;
 	if (this->state == MARIO_STATE_DIE) return; 
-	//DebugOut(L"state: %d\n", state);
+	DebugOut(L"state: %d\n", state);
 	switch (state)
 	{
 	case MARIO_STATE_RUNNING_RIGHT:
@@ -514,6 +553,15 @@ void CMario::SetState(int state)
 			isfly = true;
 			vy = -MARIO_FLY_SPEED_Y;
 		}
+		break;
+	case MARIO_STATE_GO_IN_PIPE:
+		isGoInPipe = true;
+		vy = MARIO_GO_IN_PIPE_SPEED_Y * -isCollisionWithPipe;
+		vx = 0;
+		ax = 0;
+		ay = 0;
+		startY_GoInpipe = y;
+		y -= isCollisionWithPipe;
 		break;
 	case MARIO_STATE_DIE:
 		vy = -MARIO_JUMP_DEFLECT_SPEED;

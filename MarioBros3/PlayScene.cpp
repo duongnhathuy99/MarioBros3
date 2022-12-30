@@ -210,7 +210,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		int spriteId_top_right = atoi(tokens[7].c_str());
 		int	spriteId_bot_left = atoi(tokens[8].c_str());
 		int spriteId_bot_right = atoi(tokens[9].c_str());
-		obj = new CPipe(x, y, cellWidth, cellHeight, height, spriteId_top_left, spriteId_top_right, spriteId_bot_left, spriteId_bot_right);
+		BOOLEAN isGoInside = atoi(tokens[10].c_str());
+		obj = new CPipe(x, y, cellWidth, cellHeight, height, spriteId_top_left, spriteId_top_right, spriteId_bot_left, spriteId_bot_right, isGoInside);
 		break;
 	}
 	
@@ -354,6 +355,10 @@ void CPlayScene::Update(DWORD dt)
 	if (cy < 0) cy = 0;
 	if (cx > 2544) cx = 2544;
 	if (cy > 240) cy = 240;
+	if (mario->IsInHiddenMap()) {
+		//cx = 2096;
+		cy = 464;
+	}
 	CGame::GetInstance()->SetCamPos(cx, cy);
 
 	PurgeDeletedObjects();

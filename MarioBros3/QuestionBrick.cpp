@@ -10,7 +10,7 @@ void CQuestionBrick::Render()
 	}
 	else
 		animations->Get(ID_ANI_BRICK_ITEM)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 	
 }
 

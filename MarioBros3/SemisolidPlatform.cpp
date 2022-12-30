@@ -28,7 +28,7 @@ void CSemisolidPlatform::RenderBoundingBox()
 void CSemisolidPlatform::Render()
 {
 	if (this->length <= 0) return;
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CSemisolidPlatform::GetBoundingBox(float& l, float& t, float& r, float& b)
