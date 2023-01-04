@@ -22,7 +22,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	vy += ay * dt;
 	vx += ax * dt;
-	DebugOutTitle(L"vx:%f   vy:%f   ax:%f   ay:%f isGoInPipe:%d", vx, vy, ax, ay, isGoInPipe);
+	//DebugOutTitle(L"vx:%f   vy:%f   ax:%f   ay:%f isGoInPipe:%d", vx, vy, ax, ay, isGoInPipe);
 	if (abs(vx) > abs(maxVx) && vx*maxVx > 0) vx = maxVx;
 	if (abs(vy) > maxVy && vy>0) vy = maxVy;
 	
@@ -68,9 +68,17 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (isGoInPipe)
 	{
 		ay = 0;
-		if (y - startY_GoInpipe > MARIO_BIG_BBOX_HEIGHT  && state == MARIO_STATE_GO_IN_PIPE) {
+		int mario_bbox;
+		if (level != MARIO_LEVEL_SMALL)
+			mario_bbox = MARIO_BIG_BBOX_HEIGHT;
+		else
+			mario_bbox = MARIO_SMALL_BBOX_HEIGHT;
+		if (y - startY_GoInpipe > mario_bbox && state == MARIO_STATE_GO_IN_PIPE) {
 			if (!isInHiddenMap) {
-				SetPosition(POSITION_GO_DOWN_PIPE_X, POSITION_GO_DOWN_PIPE_Y);
+				if (level != MARIO_LEVEL_SMALL)
+					SetPosition(POSITION_GO_DOWN_PIPE_X, POSITION_GO_DOWN_PIPE_Y);
+				else
+					SetPosition(POSITION_GO_DOWN_PIPE_X, POSITION_GO_DOWN_PIPE_Y + (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2);
 				startY_GoInpipe = y;
 				isInHiddenMap = true;
 			}
@@ -80,9 +88,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				ay = MARIO_GRAVITY;
 			}
 		}
-		if (startY_GoInpipe - y > MARIO_BIG_BBOX_HEIGHT && state == MARIO_STATE_GO_IN_PIPE) {
+		if (startY_GoInpipe - y > mario_bbox && state == MARIO_STATE_GO_IN_PIPE) {
 			if (isInHiddenMap) {
-				SetPosition(POSITION_GO_UP_PIPE_X, POSITION_GO_UP_PIPE_Y);
+				if(level != MARIO_LEVEL_SMALL)
+					SetPosition(POSITION_GO_UP_PIPE_X, POSITION_GO_UP_PIPE_Y);
+				else
+					SetPosition(POSITION_GO_UP_PIPE_X, POSITION_GO_UP_PIPE_Y-(MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT)/2);
 				startY_GoInpipe = y;
 				isInHiddenMap = false;
 			}
@@ -262,7 +273,9 @@ void CMario::OnCollisionWithPSwitches(LPCOLLISIONEVENT e) {
 }
 void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e) {
 	CPipe* pipe = dynamic_cast<CPipe*>(e->obj);
-	if (e->ny != 0 && pipe->IsGoInside() )
+	float xPipe, yPipe;
+	pipe->GetPosition(xPipe, yPipe);
+	if (e->ny != 0 && pipe->IsGoInside() && xPipe - RANGE_GO_IN_PIPE + TILE_BBOX/2 < x && x < xPipe + RANGE_GO_IN_PIPE + TILE_BBOX/2)
 	{
 		isCollisionWithPipe = (int)e->ny;
 	}
@@ -406,6 +419,10 @@ int CMario::GetAniId()
 			else aniId = ID_ANI_MARIO_ATTACK_LEFT;
 		}
 	}
+	if (isGoInPipe) 
+	{
+		aniId = ID_ANI_MARIO_TAIL_FRONT;
+	}
 	if (isLevelChange!=0) {
 		if ((level == MARIO_LEVEL_SMALL && isLevelChange > 0) || (level == MARIO_LEVEL_BIG && isLevelChange < 0))
 		{
@@ -461,7 +478,7 @@ void CMario::SetState(int state)
 	// DIE is the end state, cannot be changed! 
 	if (isGoInPipe)	return;
 	if (this->state == MARIO_STATE_DIE) return; 
-	DebugOut(L"state: %d\n", state);
+	//DebugOut(L"state: %d\n", state);
 	switch (state)
 	{
 	case MARIO_STATE_RUNNING_RIGHT:

@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
 
+#define RANGE_GO_IN_PIPE 2
+
 class CPipe : public CGameObject
 {
 protected:
