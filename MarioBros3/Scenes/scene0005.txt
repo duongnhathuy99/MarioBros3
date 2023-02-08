@@ -15,8 +15,8 @@ Assets\HUB.txt
 # See OBJECT_TYPE constants in AssetIDs.h
 
 # MARIO
-0	2256	90
-#0	100	300
+#0	2256	90
+0	100	300
 #COIN
 4	100	320
 4	120	320
@@ -78,7 +78,7 @@ ParaKoopa
 #6	112	352	1
 #6	128	352	1
 6	176	352	2
-6	192	352	3
+6	192	352	2
 #6	416	320	1
 
 6	224	304	1

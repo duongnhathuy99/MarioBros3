@@ -1,5 +1,5 @@
 #include "QuestionBrick.h"
-
+#include "Mario.h"
 void CQuestionBrick::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
@@ -25,6 +25,7 @@ void CQuestionBrick::GetBoundingBox(float& l, float& t, float& r, float& b)
 void CQuestionBrick::SetState(int state) {
 	CGameObject::SetState(state);
 	LPPLAYSCENE scene = (LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene();
+	CMario* mario = (CMario*)scene->GetPlayer();
 	switch (state)
 	{
 	case QUESTION_BRICK_STATE_ITEM:
@@ -38,9 +39,8 @@ void CQuestionBrick::SetState(int state) {
 			coin->SetState(COIN_STATE_MOVEUP);
 			scene->AddObject(coin);
 		}
-		if (item == ITEM_LEAF) {
+		if (item == ITEM_LEVEL_UP && mario->GetLevel() >= MARIO_LEVEL_BIG) {
 			CLeaf* leaf = new CLeaf(x, y);
-			//leaf->SetState(COIN_STATE_MOVEUP);
 			scene->AddObject(leaf);
 		}
 		break;
@@ -48,7 +48,7 @@ void CQuestionBrick::SetState(int state) {
 		vy = SPEED_QUESTION_BRICK;
 		break;
 	case QUESTION_BRICK_STATE_UNBOX:
-		if (item == ITEM_MUSHROOM) {
+		if (item == ITEM_LEVEL_UP && mario->GetLevel() == MARIO_LEVEL_SMALL) {
 			CMushroom* mushroom = new CMushroom(x, y );
 			mushroom->SetState(MUSHROOM_STATE_GROWUP);
 			scene->AddObject(mushroom);

@@ -262,7 +262,7 @@ public:
 	void handleHoldKoopa();
 	void tailAttack();
 	void calculatePowerMeter();
-
+	int GetLevel() { return level; }
 	int GetCoin() { return coin; }
 	int GetPoint() { return point; }
 	int GetHealth() { return health; }

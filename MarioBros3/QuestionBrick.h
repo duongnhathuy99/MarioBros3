@@ -22,8 +22,7 @@
 #define DISTANCE_QUESTION_BRICK_MOVEUP 7
 
 #define ITEM_COIN 1
-#define ITEM_MUSHROOM 2
-#define ITEM_LEAF 3
+#define ITEM_LEVEL_UP 2
 
 class CQuestionBrick : public CGameObject{
 	bool questionBrick_unbox;
