@@ -16,13 +16,14 @@
 #include "Fireball.h"
 #include "PSwitches.h"
 #include "Pipe.h"
+#include "ItemsMenu.h"
 #include "Collision.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	vy += ay * dt;
 	vx += ax * dt;
-	//DebugOutTitle(L"vx:%f   vy:%f   ax:%f   ay:%f isGoInPipe:%d", vx, vy, ax, ay, isGoInPipe);
+	//DebugOutTitle(L"vx:%f   vy:%f   nx:%d    state:%d", vx, vy, nx,state);
 	if (abs(vx) > abs(maxVx) && vx*maxVx > 0) vx = maxVx;
 	if (abs(vy) > maxVy && vy>0) vy = maxVy;
 	
@@ -155,6 +156,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithPSwitches(e);
 	else if (dynamic_cast<CPipe*>(e->obj))
 		OnCollisionWithPipe(e);
+	else if (dynamic_cast<ItemsMenu*>(e->obj))
+		OnCollisionWithItemsMenu(e);
 }
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
@@ -279,6 +282,10 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e) {
 	{
 		isCollisionWithPipe = (int)e->ny;
 	}
+}
+void CMario::OnCollisionWithItemsMenu(LPCOLLISIONEVENT e) {
+	e->obj->SetState(ITEMS_MENU_STATE_FLY_UP_SPINNING);
+	this->SetState(MARIO_STATE_END_SCENE);
 }
 //
 // Get animdation ID for big Mario
@@ -477,8 +484,8 @@ void CMario::SetState(int state)
 {
 	// DIE is the end state, cannot be changed! 
 	if (isGoInPipe)	return;
-	if (this->state == MARIO_STATE_DIE) return; 
-	//DebugOut(L"state: %d\n", state);
+	if (this->state == MARIO_STATE_DIE || this->state == MARIO_STATE_END_SCENE) return;
+	//DebugOut(L"state: %d \n", state);
 	switch (state)
 	{
 	case MARIO_STATE_RUNNING_RIGHT:
@@ -584,9 +591,14 @@ void CMario::SetState(int state)
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
 		vx = 0;
 		ax = 0;
+		break;	
+	case MARIO_STATE_END_SCENE:
+		ax = 0;
+		vy = 0;
+		vx = MARIO_END_SCENE_SPEED;
+		nx = 1;
 		break;
 	}
-
 	CGameObject::SetState(state);
 }
 

@@ -19,6 +19,7 @@
 #include "Koopa.h"
 #include "Parakoopa.h"
 #include "Paragoomba.h"
+#include "ItemsMenu.h"
 #include "HUB.h"
 #include "SampleKeyEventHandler.h"
 
@@ -214,7 +215,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CPipe(x, y, cellWidth, cellHeight, height, spriteId_top_left, spriteId_top_right, spriteId_bot_left, spriteId_bot_right, isGoInside);
 		break;
 	}
-	
+	case OBJECT_TYPE_ITEMS_MENU: obj = new ItemsMenu(x, y); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = (float)atof(tokens[3].c_str());

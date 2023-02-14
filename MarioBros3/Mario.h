@@ -10,6 +10,7 @@
 #define MARIO_WALKING_SPEED		0.12f
 #define MARIO_RUNNING_SPEED		0.2f
 #define MARIO_WALKING_SPEED_MIN		0.01f
+#define MARIO_END_SCENE_SPEED		0.06f
 
 #define MARIO_ACCEL_WALK_X	0.0002f
 #define MARIO_ACCEL_RUN_X	0.0001f
@@ -49,6 +50,8 @@
 #define MARIO_STATE_FLY				900
 
 #define MARIO_STATE_GO_IN_PIPE		500
+
+#define MARIO_STATE_END_SCENE		200
 #pragma endregion
 
 #pragma region ANIMATION_ID
@@ -183,6 +186,7 @@ class CMario : public CGameObject
 	void OnCollisionWithFireball(LPCOLLISIONEVENT e);
 	void OnCollisionWithPSwitches(LPCOLLISIONEVENT e);
 	void OnCollisionWithPipe(LPCOLLISIONEVENT e);
+	void OnCollisionWithItemsMenu(LPCOLLISIONEVENT e);
 	int GetAniId();
 
 public:

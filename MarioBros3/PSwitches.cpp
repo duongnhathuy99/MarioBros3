@@ -4,7 +4,7 @@ void PSwitches::Render()
 	CAnimations* animations = CAnimations::GetInstance();
 	if (isPressed)
 	{
-		animations->Get(ID_ANI_PSWITCHES_PRESSED)->Render(x, y+8);
+		animations->Get(ID_ANI_PSWITCHES_PRESSED)->Render(x, y);
 	}
 	else
 		animations->Get(ID_ANI_PSWITCHES)->Render(x, y);
