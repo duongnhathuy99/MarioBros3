@@ -6,10 +6,11 @@
 #include "Utils.h"
 #include "Textures.h"
 #include "Sprites.h"
-#include "Portal.h"
+#include "CDoor.h"
 #include "Platform.h"
 #include "WorldSceneKeyEventHandler.h"
 #include "MarioWorldMap.h"
+#include "ObjectWorldMap.h"
 
 using namespace std;
 
@@ -118,12 +119,10 @@ void CWorldScene::_ParseSection_OBJECTS(string line)
 
 		DebugOut(L"[INFO] Player object has been created!\n");
 		break;
-	case OBJECT_TYPE_PORTAL:
+	case OBJECT_TYPE_OBJECT_WORLD_MAP:
 	{
-		float r = (float)atof(tokens[3].c_str());
-		float b = (float)atof(tokens[4].c_str());
-		int scene_id = atoi(tokens[5].c_str());
-		obj = new CPortal(x, y, r, b, scene_id);
+		int type = atoi(tokens[3].c_str());
+		obj = new CObjectWorldMap(x, y, type);
 	}
 	break;
 
@@ -141,6 +140,22 @@ void CWorldScene::_ParseSection_OBJECTS(string line)
 			x, y,
 			cell_width, cell_height, length,
 			sprite_begin, sprite_middle, sprite_end
+		);
+
+		break;
+	}
+	case OBJECT_TYPE_DOOR:
+	{
+
+		int type = atoi(tokens[3].c_str());
+		BOOLEAN left = atoi(tokens[4].c_str());
+		BOOLEAN top = atoi(tokens[5].c_str());
+		BOOLEAN right = atoi(tokens[6].c_str());
+		BOOLEAN bot = atoi(tokens[7].c_str());
+
+		obj = new CDoor(
+			x, y,
+			type, left, top, right, bot
 		);
 
 		break;

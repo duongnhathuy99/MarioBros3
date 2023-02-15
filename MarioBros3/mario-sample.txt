@@ -24,4 +24,5 @@ height	240
 60	textures\background_tiles.png
 90	textures\hud2.png
 100	textures\mario5.png
+110	textures\ObjectWorldMap.png
 150	textures\TileWorldMap.png

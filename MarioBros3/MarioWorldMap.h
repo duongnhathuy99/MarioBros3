@@ -3,6 +3,7 @@
 
 #include "Animation.h"
 #include "Animations.h"
+#include "CDoor.h"
 #include "debug.h"
 
 #define MARIO_WORLD_SPEED 0.1f
@@ -23,14 +24,12 @@ class MarioWorldMap : public CGameObject
 {
 	int level;
 	float x_start, y_start;
-	/*void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
-	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
-	void OnCollisionWithCoin(LPCOLLISIONEVENT e)*/
-	
+	CDoor* door;
 
 public:
 	MarioWorldMap(float x, float y) : CGameObject(x, y)
 	{
+		door = new CDoor(0,0,0,0,0,1,0);
 		SetState(MARIO_WORLD_STATE_IDLE);
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -46,7 +45,7 @@ public:
 
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
-
+	void StartPlayScene();
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	int GetLevel() { return level; }
 };

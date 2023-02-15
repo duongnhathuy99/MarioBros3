@@ -6,7 +6,7 @@
 
 void MarioWorldMap::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	DebugOutTitle(L"vx:%f   vy:%f   x:%f    y:%f    state:%d", vx, vy, x, y, state);
+	DebugOutTitle(L"x:%f   y:%f  value:%d  left:%d   top:%d   right:%d   bot:%d", x-8, y-8, door->GetType(), door->GetLeft(), door->GetTop(), door->GetRight(), door->GetBot());
 	if ( (abs(x_start - x) >= MARIO_WORLD_DISTANCE_CAN_GO || abs(y_start - y) >= MARIO_WORLD_DISTANCE_CAN_GO) && state != MARIO_WORLD_STATE_IDLE)
 	{
 		if (vx != 0)
@@ -32,6 +32,8 @@ void MarioWorldMap::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		SetState(MARIO_WORLD_STATE_IDLE);
 	}
+	if (dynamic_cast<CDoor*>(e->obj))
+		door = dynamic_cast<CDoor*>(e->obj);
 }
 
 //
@@ -52,18 +54,22 @@ void MarioWorldMap::SetState(int state)
 	switch (state)
 	{
 	case MARIO_WORLD_STATE_GO_UP:
+		if (!door->GetTop()) return;
 		vy = -MARIO_WORLD_SPEED;
 		vx = 0;
 		break;
 	case MARIO_WORLD_STATE_GO_DOWN:
+		if (!door->GetBot()) return;
 		vy = MARIO_WORLD_SPEED;
 		vx = 0;
 		break;
 	case MARIO_WORLD_STATE_GO_LEFT:
+		if (!door->GetLeft()) return;
 		vx = -MARIO_WORLD_SPEED;
 		vy = 0;
 		break;
 	case MARIO_WORLD_STATE_GO_RIGHT:
+		if (!door->GetRight()) return;
 		vx = MARIO_WORLD_SPEED;
 		vy = 0;
 		break;
@@ -77,6 +83,10 @@ void MarioWorldMap::SetState(int state)
 	CGameObject::SetState(state);
 }
 
+void MarioWorldMap::StartPlayScene() {
+	if (state != MARIO_WORLD_STATE_IDLE) return;
+	if(door->GetType() == DOOR_TYPE_1) CGame::GetInstance()->InitiateSwitchScene(2);
+}
 void MarioWorldMap::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	

@@ -6,7 +6,6 @@
 
 #include "Goomba.h"
 #include "Coin.h"
-#include "Portal.h"
 #include "QuestionBrick.h"
 #include "Brick.h"
 #include "Mushroom.h"
@@ -136,8 +135,6 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithGoomba(e);
 	else if (dynamic_cast<CCoin*>(e->obj))
 		OnCollisionWithCoin(e);
-	else if (dynamic_cast<CPortal*>(e->obj))
-		OnCollisionWithPortal(e);
 	else if (dynamic_cast<CQuestionBrick*>(e->obj))
 		OnCollisionWithQuestionBrick(e);
 	else if (dynamic_cast<CBrick*>(e->obj))
@@ -239,11 +236,6 @@ void CMario::OnCollisionWithBrick(LPCOLLISIONEVENT e)
 	}else if(e->obj->GetState() == BRICK_STATE_INITIAL && e->ny > 0)
 		e->obj->SetState(BRICK_STATE_UNBOX);
 	
-}
-void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
-{
-	CPortal* p = (CPortal*)e->obj;
-	CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
 }
 void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 {
