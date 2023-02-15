@@ -3,10 +3,12 @@
 #include "Game.h"
 #include "debug.h"
 #include "Utils.h"
+#include "AssetIDs.h"
 
 #include "Texture.h"
 #include "Animations.h"
 #include "PlayScene.h"
+#include "CWorldScene.h"
 
 CGame * CGame::__instance = NULL;
 
@@ -456,9 +458,27 @@ void CGame::_ParseSection_SCENES(string line)
 	if (tokens.size() < 2) return;
 	int id = atoi(tokens[0].c_str());
 	LPCWSTR path = ToLPCWSTR(tokens[1]);   // file: ASCII format (single-byte char) => Wide Char
-
-	LPSCENE scene = new CPlayScene(id, path);
-	scenes[id] = scene;
+	switch (id)
+	{
+	case ID_INTRODUCE_SCENE: 
+		{
+			LPSCENE play_scene = new CPlayScene(id, path);
+			scenes[id] = play_scene;
+			break;
+		}
+	case ID_WORLD_SCENE: 
+		{
+			LPSCENE world_scene = new CWorldScene(id, path);
+			scenes[id] = world_scene;
+			break;
+		}
+	case ID_PLAY_SCENE: 
+		{
+			LPSCENE play_scene = new CPlayScene(id, path);
+			scenes[id] = play_scene;
+			break; 
+		}
+	}
 }
 
 /*

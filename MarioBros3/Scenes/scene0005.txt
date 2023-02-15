@@ -1,7 +1,7 @@
 # list of object assets to load in this scene
 [ASSETS]
 Assets\effect.txt
-Assets\mario.txt
+#Assets\mario.txt
 Assets\mario1.txt
 Assets\fireball.txt
 Assets\block.txt

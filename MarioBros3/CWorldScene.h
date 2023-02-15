@@ -1,20 +1,14 @@
 #pragma once
+#include "Scene.h"
 #include "Game.h"
 #include "Textures.h"
 #include "Scene.h"
 #include "GameObject.h"
-#include "Brick.h"
-#include "Mario.h"
-#include "Goomba.h"
 #include "Map.h"
-//#include "Koopas.h"
 
-
-class CPlayScene: public CScene
+class CWorldScene:	public CScene
 {
-protected: 
-	// A play scene has to have player, right? 
-	LPGAMEOBJECT player;					
+	LPGAMEOBJECT player;
 	LPMAP map;
 	vector<LPGAMEOBJECT> objects;
 
@@ -26,9 +20,9 @@ protected:
 	void _ParseSection_MAP(string line);
 
 	void LoadAssets(LPCWSTR assetFile);
-	
-public: 
-	CPlayScene(int id, LPCWSTR filePath);
+
+public:
+	CWorldScene(int id, LPCWSTR filePath);
 
 	virtual void Load();
 	virtual void Update(DWORD dt);
@@ -37,12 +31,10 @@ public:
 
 	LPGAMEOBJECT GetPlayer() { return player; }
 
-	void AddObject(CGameObject *obj) { objects.insert(objects.begin() + 1, obj); }
 	void Clear();
 	void PurgeDeletedObjects();
 
 	static bool IsGameObjectDeleted(const LPGAMEOBJECT& o);
 };
 
-typedef CPlayScene* LPPLAYSCENE;
-
+typedef CWorldScene* LPWORLDSCENE;

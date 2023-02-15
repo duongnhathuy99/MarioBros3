@@ -18,4 +18,4 @@ public:
 	void LoadMapSprite();
 	void Draw();
 };
-
+typedef Map* LPMAP;

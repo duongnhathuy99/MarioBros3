@@ -4,6 +4,10 @@
 // This file contains all IDs of game assets 
 //
 
+#define ID_INTRODUCE_SCENE 0
+#define ID_WORLD_SCENE 1
+#define ID_PLAY_SCENE 2
+
 #define ID_TEX_MARIO 0
 #define ID_TEX_ENEMY 10
 #define ID_TEX_MISC 20

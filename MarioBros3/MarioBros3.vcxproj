@@ -148,6 +148,7 @@
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="CWorldScene.cpp" />
     <ClCompile Include="debug.cpp" />
     <ClCompile Include="Fireball.cpp" />
     <ClCompile Include="FirePiranhaPlant.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Mario.cpp" />
+    <ClCompile Include="MarioWorldMap.cpp" />
     <ClCompile Include="Mushroom.cpp" />
     <ClCompile Include="Paragoomba.cpp" />
     <ClCompile Include="Parakoopa.cpp" />
@@ -178,6 +180,7 @@
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="PiranhaPlant.cpp" />
+    <ClCompile Include="WorldSceneKeyEventHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
@@ -187,6 +190,7 @@
     <ClInclude Include="Brick.h" />
     <ClInclude Include="Coin.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="CWorldScene.h" />
     <ClInclude Include="debug.h" />
     <ClInclude Include="Fireball.h" />
     <ClInclude Include="FirePiranhaPlant.h" />
@@ -200,6 +204,7 @@
     <ClInclude Include="Leaf.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Mario.h" />
+    <ClInclude Include="MarioWorldMap.h" />
     <ClInclude Include="Mushroom.h" />
     <ClInclude Include="Paragoomba.h" />
     <ClInclude Include="Parakoopa.h" />
@@ -219,6 +224,7 @@
     <ClInclude Include="Textures.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="PiranhaPlant.h" />
+    <ClInclude Include="WorldSceneKeyEventHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
