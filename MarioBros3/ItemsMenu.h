@@ -43,4 +43,5 @@ protected:
 public:
 	ItemsMenu(float x, float y);
 	virtual void SetState(int state);
+	int GetTypeItems() { return typeItems; }
 };

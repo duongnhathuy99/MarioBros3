@@ -2,6 +2,7 @@
 [ASSETS]
 Assets\marioWorld.txt
 Assets\block.txt
+Assets\HUB.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type

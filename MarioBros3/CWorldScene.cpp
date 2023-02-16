@@ -6,6 +6,7 @@
 #include "Utils.h"
 #include "Textures.h"
 #include "Sprites.h"
+#include "HUD.h"
 #include "CDoor.h"
 #include "Platform.h"
 #include "WorldSceneKeyEventHandler.h"
@@ -301,7 +302,7 @@ void CWorldScene::Render()
 	map->Draw();
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
-	//hub->Render();
+	HUD::GetInstance()->Render();
 }
 
 /*

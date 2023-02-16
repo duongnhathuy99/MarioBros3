@@ -117,7 +117,7 @@
     <ClCompile Include="PSwitches.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HUB.cpp">
+    <ClCompile Include="HUD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ItemsMenu.cpp">
@@ -248,7 +248,7 @@
     <ClInclude Include="PSwitches.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HUB.h">
+    <ClInclude Include="HUD.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ItemsMenu.h">

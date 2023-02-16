@@ -156,7 +156,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Goomba.cpp" />
-    <ClCompile Include="HUB.cpp" />
+    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="ItemsMenu.cpp" />
     <ClCompile Include="Koopa.cpp" />
     <ClCompile Include="Leaf.cpp" />
@@ -199,7 +199,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Goomba.h" />
-    <ClInclude Include="HUB.h" />
+    <ClInclude Include="HUD.h" />
     <ClInclude Include="ItemsMenu.h" />
     <ClInclude Include="KeyEventHandler.h" />
     <ClInclude Include="Koopa.h" />

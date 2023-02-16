@@ -4,7 +4,7 @@
 #include "debug.h"
 #include "Utils.h"
 #include "AssetIDs.h"
-
+#include "HUD.h"
 #include "Texture.h"
 #include "Animations.h"
 #include "PlayScene.h"
@@ -531,8 +531,9 @@ void CGame::Load(LPCWSTR gameFile)
 void CGame::SwitchScene()
 {
 	if (next_scene < 0 || next_scene == current_scene) return; 
-
+	
 	DebugOut(L"[INFO] Switching to scene %d\n", next_scene);
+	if (next_scene == ID_PLAY_SCENE)HUD::GetInstance()->TimeStart();
 
 	scenes[current_scene]->Unload();
 

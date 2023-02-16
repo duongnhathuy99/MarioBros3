@@ -172,7 +172,7 @@ class CMario : public CGameObject
 	BOOLEAN isOnPlatform;
 	int isCollisionWithPipe;
 	int isInHiddenMap;
-	int coin, health, PowerMeter, point, time;
+	int PowerMeter;
 
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
@@ -219,11 +219,7 @@ public:
 		levelChange_start = -1;
 		Playing_time_start = GetTickCount64();
 
-		coin = 0;
 		PowerMeter = 0;
-		point = 0;
-		health = 4;
-		time = 300;
 		tail = NULL;
 		holdKoopa = NULL;
 	}
@@ -266,9 +262,5 @@ public:
 	void tailAttack();
 	void calculatePowerMeter();
 	int GetLevel() { return level; }
-	int GetCoin() { return coin; }
-	int GetPoint() { return point; }
-	int GetHealth() { return health; }
-	int GetTime() {  return time - INT((GetTickCount64() - Playing_time_start) / 1000); }
 	int GetPowerMeter() { return PowerMeter; }
 };

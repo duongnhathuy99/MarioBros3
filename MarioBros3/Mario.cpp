@@ -3,7 +3,7 @@
 
 #include "Mario.h"
 #include "Game.h"
-
+#include "HUD.h"
 #include "Goomba.h"
 #include "Coin.h"
 #include "QuestionBrick.h"
@@ -225,14 +225,14 @@ void CMario::OnCollisionWithFireball(LPCOLLISIONEVENT e)
 }
 void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 {
+	HUD::GetInstance()->Get1Coin();
 	e->obj->Delete();
-	coin++;
 }
 void CMario::OnCollisionWithBrick(LPCOLLISIONEVENT e)
 {
 	if (e->obj->GetState() == BRICK_STATE_COIN) {
 		e->obj->Delete();
-		coin++;
+		HUD::GetInstance()->Get1Coin();
 	}else if(e->obj->GetState() == BRICK_STATE_INITIAL && e->ny > 0)
 		e->obj->SetState(BRICK_STATE_UNBOX);
 	
@@ -276,8 +276,10 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e) {
 	}
 }
 void CMario::OnCollisionWithItemsMenu(LPCOLLISIONEVENT e) {
-	e->obj->SetState(ITEMS_MENU_STATE_FLY_UP_SPINNING);
+	ItemsMenu* items = dynamic_cast<ItemsMenu*>(e->obj);
+	items->SetState(ITEMS_MENU_STATE_FLY_UP_SPINNING);
 	this->SetState(MARIO_STATE_END_SCENE);
+	HUD::GetInstance()->SetItemMenu(items->GetTypeItems());
 }
 //
 // Get animdation ID for big Mario
