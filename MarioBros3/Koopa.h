@@ -12,7 +12,7 @@
 #define KOOPA_BBOX_SHELL_WIDTH 16
 
 #define KOOPA_SHELL_TIMEOUT 8000
-#define KOOPA_RETURN_WALKING_TIME 5000
+#define KOOPA_RETURN_WALKING_TIME 6000
 
 #define KOOPA_STATE_WALKING 100
 #define KOOPA_STATE_SHELL 200
@@ -57,6 +57,7 @@ protected:
 
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
+	void OnCollisionWithBlackKoopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithBrick(LPCOLLISIONEVENT e);
 	void OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e);

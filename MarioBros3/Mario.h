@@ -20,7 +20,7 @@
 #define MARIO_JUMP_RUN_SPEED_Y	0.5f
 #define MARIO_FLY_SPEED_Y		0.4f
 
-#define MARIO_SLOW_FALL_SPEED_Y		0.05f
+#define MARIO_SLOW_FALL_SPEED_Y		0.04f
 #define MARIO_FALL_SPEED_MAX	0.24f
 #define MARIO_GO_IN_PIPE_SPEED_Y	0.02f
 
@@ -112,6 +112,9 @@
 #define ID_ANI_MARIO_TOPPLE 280
 #define ID_ANI_MARIO_LOOK_UP 281
 
+#define ID_ANI_MARIO_FALL_SLOW_RIGHT 290
+#define ID_ANI_MARIO_FALL_SLOW_LEFT 291
+
 #define DISTANCE_ID_ANI_MARIO 1000
 #define ID_ANI_MARIO_DIE 999
 
@@ -143,20 +146,20 @@
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_KICK_TIME 150
 #define MARIO_TAIL_ATTACK_TIME 360
-#define MARIO_TAIL_SLOW_FALL_TIME 250
+#define MARIO_TAIL_SLOW_FALL_TIME 300
 #define POWER_METER_TIME 200
 #define MARIO_FLY_TIME 6000
 #define PSWITCHES_TIME 6000
 #define MARIO_LEVEL_CHANGE_TIME	600
-#define MARIO_TOPPLE_TIME 350
-#define MARIO_LOOK_UP_TIME 1000
+#define MARIO_TOPPLE_TIME 500
+#define MARIO_LOOK_UP_TIME 1600
 
 #pragma endregion
 
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting, isGoInPipe;
-	BOOLEAN isKick, ishold, isAttack, isfly, isPSwitches, isUntouchable, isTopple;
+	BOOLEAN isKick, ishold, isAttack, isfly, isPSwitches, isUntouchable, isSlowFall, isTopple;
 	int isLevelChange;
 	float maxVx, maxVy;
 	float ax;				// acceleration on x 
@@ -205,6 +208,7 @@ public:
 		isAttack = false;
 		ishold = false;
 		isfly = false;
+		isSlowFall = false;
 		isPSwitches = false;
 		isUntouchable = false;
 		isTopple = false;
@@ -219,7 +223,7 @@ public:
 		kick_start = -1;
 		attack_start = -1;
 		untouchable_start = -1;
-		slowFall_start = -1;
+		slowFall_start = 0;
 		powerMeter_start = GetTickCount64();
 		fly_start = -1;
 		PSwitches_start = -1;
@@ -271,9 +275,10 @@ public:
 	void setLuigi() {
 		 level = MARIO_LEVEL_FIRE;
 	}
-	void setMario() {
-		nx = -1;
+	void setDirectionMario(int direct) {
+		nx = direct;
 	}
+	void setAccel() { ax = 0; }
 	int GetLevel() { return level; }
 	int GetPowerMeter() { return PowerMeter; }
 };

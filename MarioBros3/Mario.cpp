@@ -62,8 +62,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		vy = MARIO_SLOW_FALL_SPEED_Y;
 		ay = 0;
+		isSlowFall = true;
 	}
-	else 	ay = MARIO_GRAVITY;
+	else 
+	{ 
+		ay = MARIO_GRAVITY;
+		isSlowFall = false;
+	}
 	//time mario fly
 	if (GetTickCount64() - fly_start > MARIO_FLY_TIME && isfly)
 	{
@@ -225,8 +230,12 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	if (e->ny < 0)
 	{
 		if (goomba->GetState() != GOOMBA_STATE_DIE)
+		{
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
-		goomba->TakeDamage();
+			slowFall_start = 0;
+			goomba->TakeDamage();
+		}
+		
 	}
 	else // hit by Goomba
 	{
@@ -439,6 +448,11 @@ int CMario::GetAniId()
 			else aniId = ID_ANI_MARIO_ATTACK_LEFT;
 		}
 	}
+	if (isSlowFall)
+	{
+		if (nx > 0) aniId = ID_ANI_MARIO_FALL_SLOW_RIGHT;
+		else aniId = ID_ANI_MARIO_FALL_SLOW_LEFT;
+	}
 	if (isGoInPipe) 
 	{
 		aniId = ID_ANI_MARIO_TAIL_FRONT;
@@ -576,7 +590,7 @@ void CMario::SetState(int state)
 		}
 		break;
 	case MARIO_STATE_SLOW_FALL:
-		if(level==MARIO_LEVEL_RACCOON)
+		if (level == MARIO_LEVEL_RACCOON)
 			slowFall_start = GetTickCount64();
 		break;
 	case MARIO_STATE_IDLE:

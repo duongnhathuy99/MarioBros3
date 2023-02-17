@@ -7,6 +7,7 @@
 #include "QuestionBrick.h"
 #include "Brick.h"
 #include "Koopa.h"
+#include "BlackKoopa.h"
 #include "PiranhaPlant.h"
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -63,6 +64,8 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithQuestionBrick(e);
 	else if (dynamic_cast<CKoopa*>(e->obj))
 		OnCollisionWithKoopa(e);
+	else if (dynamic_cast<CBlackKoopa*>(e->obj))
+		OnCollisionWithBlackKoopa(e);
 	else if (dynamic_cast<CPiranhaPlant*>(e->obj))
 		OnCollisionWithPiranhaPlant(e);
 }
@@ -109,6 +112,13 @@ void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 	{
 		koopa->SetState(KOOPA_STATE_DIE_SHELL_OVERTURNED);
 	}
+}
+void CKoopa::OnCollisionWithBlackKoopa(LPCOLLISIONEVENT e)
+{
+	CBlackKoopa* Black_koopa = dynamic_cast<CBlackKoopa*>(e->obj);
+	if (Black_koopa->GetState() == BLACK_KOOPA_STATE_SHELL)
+		Black_koopa->SetState(BLACK_KOOPA_STATE_OVERTURNED);
+	
 }
 void CKoopa::OnCollisionWithPiranhaPlant(LPCOLLISIONEVENT e)
 {
