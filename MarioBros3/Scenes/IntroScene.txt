@@ -1,0 +1,24 @@
+# list of object assets to load in this scene
+[ASSETS]
+Assets\effect.txt
+Assets\mario1.txt
+Assets\enemy.txt
+Assets\Intro.txt
+Assets\item.txt
+#
+[OBJECTS]
+# type	x	y	extra_settings per object type
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas
+# See OBJECT_TYPE constants in AssetIDs.h
+
+
+#Platform
+5	8	199	32	38	8	55012	55012	55012
+5	0	224	16	20	16	55014	55014	55014
+#5	0	86	16	187	16	55013	55013	55013
+
+#Object world map 
+50	120	86	0	-0.07	4
+
+#[MAP]
+#30	Assets/Map1.txt	42	176	11	11	16	16	0

@@ -51,6 +51,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		kick_start = 0;
 		isKick = false;
 	}
+	//time mario Topple
+	if (GetTickCount64() - Topple_time_start > MARIO_LOOK_UP_TIME)
+	{
+		Topple_time_start = 0;
+		isTopple = false;
+	}
 	//time mario slow fall
 	if (GetTickCount64() - slowFall_start < MARIO_TAIL_SLOW_FALL_TIME && !isOnPlatform)
 	{
@@ -120,13 +126,18 @@ void CMario::OnNoCollision(DWORD dt)
 
 void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 {
+	if (dynamic_cast<CMario*>(e->obj))
+	{
+		dynamic_cast<CMario*>(e->obj)->SetState(MARIO_STATE_SIT);
+		SetSpeed(0.06f,-0.55f);
+		return;
+	}
 	if (e->ny != 0 && e->obj->IsBlocking())
 	{
 		vy = 0;
 		if (e->ny < 0) isOnPlatform = true;
 	}
-	else 
-	if (e->nx != 0 && e->obj->IsBlocking())
+	else if (e->nx != 0 && e->obj->IsBlocking())
 	{
 		vx = 0;
 	}
@@ -175,6 +186,14 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 		case PARAKOOPA_STATE_JUMP:
 			koopa->SetState(KOOPA_STATE_WALKING);
 			break;
+		}
+	}
+	else if (e->ny > 0)
+	{
+		if (koopa->GetState() == KOOPA_STATE_SHELL) {
+			koopa->SetSpeed(-0.07f, -0.07f);
+			Topple_time_start = GetTickCount64();
+			isTopple = true;
 		}
 	}
 	else 
@@ -432,6 +451,12 @@ int CMario::GetAniId()
 		}
 		else
 			aniId = ID_ANI_MARIO_EFFECT_SMOKE;
+	}
+	if (isTopple)
+	{
+		aniId = ID_ANI_MARIO_TOPPLE;
+		if (GetTickCount64() - Topple_time_start > MARIO_TOPPLE_TIME)
+			aniId = ID_ANI_MARIO_LOOK_UP;
 	}
 	if (aniId == -1) aniId = ID_ANI_MARIO_IDLE_RIGHT;
 

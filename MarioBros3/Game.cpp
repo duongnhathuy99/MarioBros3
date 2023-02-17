@@ -9,6 +9,7 @@
 #include "Animations.h"
 #include "PlayScene.h"
 #include "CWorldScene.h"
+#include "IntroScene.h"
 
 CGame * CGame::__instance = NULL;
 
@@ -446,7 +447,7 @@ void CGame::_ParseSection_SETTINGS(string line)
 
 	if (tokens.size() < 2) return;
 	if (tokens[0] == "start")
-		next_scene = atoi(tokens[1].c_str());
+		current_scene = atoi(tokens[1].c_str());
 	else
 		DebugOut(L"[ERROR] Unknown game setting: %s\n", ToWSTR(tokens[0]).c_str());
 }
@@ -462,8 +463,8 @@ void CGame::_ParseSection_SCENES(string line)
 	{
 	case ID_INTRODUCE_SCENE: 
 		{
-			LPSCENE play_scene = new CPlayScene(id, path);
-			scenes[id] = play_scene;
+			LPSCENE intro_scene = new CIntroScene(id, path);
+			scenes[id] = intro_scene;
 			break;
 		}
 	case ID_WORLD_SCENE: 
@@ -525,9 +526,14 @@ void CGame::Load(LPCWSTR gameFile)
 
 	DebugOut(L"[INFO] Loading game file : %s has been loaded successfully\n", gameFile);
 
-	SwitchScene();
+	StartScene();
 }
-
+void CGame::StartScene() {
+	DebugOut(L"[INFO] Start to scene %d\n", current_scene);
+	LPSCENE s = scenes[current_scene];
+	this->SetKeyHandler(s->GetKeyEventHandler());
+	s->Load();
+}
 void CGame::SwitchScene()
 {
 	if (next_scene < 0 || next_scene == current_scene) return; 

@@ -1,0 +1,42 @@
+# id	left	top	right	bottom	texture_id
+[SPRITES]
+#Platform intro
+55000	0	0	255	223	120
+
+55012	0	186	31	223	120
+#Platform Black
+55014	16	202	31	221	120
+
+#curtain intro
+55001	0	225	255	412	120
+
+55013	0	225	15	412	120
+#curtain foot
+55003	257	110	512	123	120
+#Text super mario bros 3
+55002	257	0	496	109	120
+
+#number 3
+55004	257	125	298	166	120
+55005	303	125	344	166	120
+55006	350	125	391	166	120
+55007	396	125	437	166	120
+
+#tree left
+55008	257	168	320	263	120
+
+#tree right
+55009	323	168	384	263	120
+
+#back ground intro
+55015	0	0	255	239	130
+#select 1 player
+55010	257	265	368	304	120
+
+#select 2 player
+55011	382	265	493	304	120
+
+# ani_id	sprite1_id	time1	sprite2_id	time2	...
+[ANIMATIONS]
+#number 3
+5500	55004	200	55005	200	55006	200	55007	200

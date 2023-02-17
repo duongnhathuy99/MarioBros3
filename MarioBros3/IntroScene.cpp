@@ -2,25 +2,27 @@
 #include <fstream>
 #include "AssetIDs.h"
 
-#include "CWorldScene.h"
+#include "IntroScene.h"
 #include "Utils.h"
 #include "Textures.h"
 #include "Sprites.h"
-#include "HUD.h"
-#include "CDoor.h"
-#include "Platform.h"
+#include "IntroSceneKeyEventHandler.h"
+
+
+
 #include "WorldSceneKeyEventHandler.h"
-#include "MarioWorldMap.h"
-#include "ObjectWorldMap.h"
+#include "SampleKeyEventHandler.h"
 
 using namespace std;
 
-CWorldScene::CWorldScene(int id, LPCWSTR filePath) :
+CIntroScene::CIntroScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
 {
 	map = NULL;
 	player = NULL;
-	key_handler = new CWorldSceneKeyEventHandler(this);
+	key_handler = new CIntroSceneKeyEventHandler(this);
+	//key_handler = new CSampleKeyHandler(this);
+	//key_handler = new CWorldSceneKeyEventHandler(this);
 }
 
 
@@ -36,7 +38,7 @@ CWorldScene::CWorldScene(int id, LPCWSTR filePath) :
 #define MAX_SCENE_LINE 1024
 
 //HUB* hub;
-void CWorldScene::_ParseSection_SPRITES(string line)
+void CIntroScene::_ParseSection_SPRITES(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -59,7 +61,7 @@ void CWorldScene::_ParseSection_SPRITES(string line)
 	CSprites::GetInstance()->Add(ID, l, t, r, b, tex);
 }
 
-void CWorldScene::_ParseSection_ASSETS(string line)
+void CIntroScene::_ParseSection_ASSETS(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -70,7 +72,7 @@ void CWorldScene::_ParseSection_ASSETS(string line)
 	LoadAssets(path.c_str());
 }
 
-void CWorldScene::_ParseSection_ANIMATIONS(string line)
+void CIntroScene::_ParseSection_ANIMATIONS(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -94,7 +96,7 @@ void CWorldScene::_ParseSection_ANIMATIONS(string line)
 /*
 	Parse a line in section [OBJECTS]
 */
-void CWorldScene::_ParseSection_OBJECTS(string line)
+void CIntroScene::_ParseSection_OBJECTS(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -109,7 +111,7 @@ void CWorldScene::_ParseSection_OBJECTS(string line)
 
 	switch (object_type)
 	{
-	case OBJECT_TYPE_MARIO:
+	/*case OBJECT_TYPE_MARIO:
 		if (player != NULL)
 		{
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
@@ -119,7 +121,7 @@ void CWorldScene::_ParseSection_OBJECTS(string line)
 		player = (MarioWorldMap*)obj;
 
 		DebugOut(L"[INFO] Player object has been created!\n");
-		break;
+		break;*/
 	case OBJECT_TYPE_OBJECT_WORLD_MAP:
 	{
 		float vx = (float)atof(tokens[3].c_str());
@@ -147,23 +149,7 @@ void CWorldScene::_ParseSection_OBJECTS(string line)
 
 		break;
 	}
-	case OBJECT_TYPE_DOOR:
-	{
-
-		int type = atoi(tokens[3].c_str());
-		BOOLEAN left = atoi(tokens[4].c_str());
-		BOOLEAN top = atoi(tokens[5].c_str());
-		BOOLEAN right = atoi(tokens[6].c_str());
-		BOOLEAN bot = atoi(tokens[7].c_str());
-
-		obj = new CDoor(
-			x, y,
-			type, left, top, right, bot
-		);
-
-		break;
-	}
-
+	
 	default:
 		DebugOut(L"[ERROR] Invalid object type: %d\n", object_type);
 		return;
@@ -175,7 +161,7 @@ void CWorldScene::_ParseSection_OBJECTS(string line)
 
 	objects.push_back(obj);
 }
-void CWorldScene::_ParseSection_MAP(string line) {
+void CIntroScene::_ParseSection_MAP(string line) {
 	vector<string> tokens = split(line);
 	if (tokens.size() < 8) return;
 	int IDtex = atoi(tokens[0].c_str());
@@ -190,7 +176,7 @@ void CWorldScene::_ParseSection_MAP(string line) {
 	map = new Map(IDtex, mapPath.c_str(), mapRow, mapColumn, tileRow, tileColumn, tileWidth, tileHeight);
 	DebugOut(L"[INFO] Done loading map from %s\n", mapPath.c_str());
 }
-void CWorldScene::LoadAssets(LPCWSTR assetFile)
+void CIntroScene::LoadAssets(LPCWSTR assetFile)
 {
 	DebugOut(L"[INFO] Start loading assets from : %s \n", assetFile);
 
@@ -225,7 +211,7 @@ void CWorldScene::LoadAssets(LPCWSTR assetFile)
 	DebugOut(L"[INFO] Done loading assets from %s\n", assetFile);
 }
 
-void CWorldScene::Load()
+void CIntroScene::Load()
 {
 	DebugOut(L"[INFO] Start loading World scene from : %s \n", sceneFilePath);
 
@@ -262,11 +248,9 @@ void CWorldScene::Load()
 	DebugOut(L"[INFO] Done loading World scene  %s\n", sceneFilePath);
 }
 
-void CWorldScene::Update(DWORD dt)
+void CIntroScene::Update(DWORD dt)
 {
-	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
-	// TO-DO: This is a "dirty" way, need a more organized way 
-
+	scriptIntro();
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
 	{
@@ -277,40 +261,27 @@ void CWorldScene::Update(DWORD dt)
 	{
 		objects[i]->Update(dt, &coObjects);
 	}
-
+	DebugOutTitle(L"Time:%d", GetTickCount64() - time_intro_start);
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
-	if (player == NULL) return;
+	//if (player == NULL) return;
 
-	// Update camera to follow mario
-	float cx, cy;
-	player->GetPosition(cx, cy);
-	MarioWorldMap* mario = (MarioWorldMap*)player;
 	CGame* game = CGame::GetInstance();
-	cx -= game->GetBackBufferWidth() / 2;
-	//if (mario->IsFlying() || cy - game->GetBackBufferHeight() / 2 < 240)
-	cy -= game->GetBackBufferHeight() / 2;
-
-	if (cx < 0) cx = 0;
-	if (cy < 0) cy = 0;
-	if (cx > 2544) cx = 2544;
-	if (cy > 240) cy = 240;
 	CGame::GetInstance()->SetCamPos(0, 0);
 
 	PurgeDeletedObjects();
 }
 
-void CWorldScene::Render()
+void CIntroScene::Render()
 {
-	map->Draw();
+	//map->Draw();
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
-	HUD::GetInstance()->Render();
 }
 
 /*
 *	Clear all objects from this scene
 */
-void CWorldScene::Clear()
+void CIntroScene::Clear()
 {
 	vector<LPGAMEOBJECT>::iterator it;
 	for (it = objects.begin(); it != objects.end(); it++)
@@ -326,7 +297,7 @@ void CWorldScene::Clear()
 	TODO: Beside objects, we need to clean up sprites, animations and textures as well
 
 */
-void CWorldScene::Unload()
+void CIntroScene::Unload()
 {
 	for (int i = 0; i < objects.size(); i++)
 		delete objects[i];
@@ -334,12 +305,12 @@ void CWorldScene::Unload()
 	objects.clear();
 	player = NULL;
 
-	DebugOut(L"[INFO] World Scene %d unloaded! \n", id);
+	DebugOut(L"[INFO] Intro Scene %d unloaded! \n", id);
 }
 
-bool CWorldScene::IsGameObjectDeleted(const LPGAMEOBJECT& o) { return o == NULL; }
+bool CIntroScene::IsGameObjectDeleted(const LPGAMEOBJECT& o) { return o == NULL; }
 
-void CWorldScene::PurgeDeletedObjects()
+void CIntroScene::PurgeDeletedObjects()
 {
 	vector<LPGAMEOBJECT>::iterator it;
 	for (it = objects.begin(); it != objects.end(); it++)
@@ -355,6 +326,6 @@ void CWorldScene::PurgeDeletedObjects()
 	// NOTE: remove_if will swap all deleted items to the end of the vector
 	// then simply trim the vector, this is much more efficient than deleting individual items
 	objects.erase(
-		std::remove_if(objects.begin(), objects.end(), CWorldScene::IsGameObjectDeleted),
+		std::remove_if(objects.begin(), objects.end(), CIntroScene::IsGameObjectDeleted),
 		objects.end());
 }

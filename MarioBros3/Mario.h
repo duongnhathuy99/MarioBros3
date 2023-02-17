@@ -109,6 +109,9 @@
 
 #define ID_ANI_MARIO_EFFECT_SMOKE 270
 
+#define ID_ANI_MARIO_TOPPLE 280
+#define ID_ANI_MARIO_LOOK_UP 281
+
 #define DISTANCE_ID_ANI_MARIO 1000
 #define ID_ANI_MARIO_DIE 999
 
@@ -145,13 +148,15 @@
 #define MARIO_FLY_TIME 6000
 #define PSWITCHES_TIME 6000
 #define MARIO_LEVEL_CHANGE_TIME	600
+#define MARIO_TOPPLE_TIME 350
+#define MARIO_LOOK_UP_TIME 1000
 
 #pragma endregion
 
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting, isGoInPipe;
-	BOOLEAN isKick, ishold, isAttack, isfly, isPSwitches, isUntouchable;
+	BOOLEAN isKick, ishold, isAttack, isfly, isPSwitches, isUntouchable, isTopple;
 	int isLevelChange;
 	float maxVx, maxVy;
 	float ax;				// acceleration on x 
@@ -169,6 +174,7 @@ class CMario : public CGameObject
 	ULONGLONG PSwitches_start;
 	ULONGLONG levelChange_start;
 	ULONGLONG Playing_time_start;
+	ULONGLONG Topple_time_start;
 	BOOLEAN isOnPlatform;
 	int isCollisionWithPipe;
 	int isInHiddenMap;
@@ -201,6 +207,7 @@ public:
 		isfly = false;
 		isPSwitches = false;
 		isUntouchable = false;
+		isTopple = false;
 		isLevelChange = 0;
 		maxVx = 0.0f;
 		maxVy = MARIO_FALL_SPEED_MAX;
@@ -218,7 +225,7 @@ public:
 		PSwitches_start = -1;
 		levelChange_start = -1;
 		Playing_time_start = GetTickCount64();
-
+		Topple_time_start = -1;
 		PowerMeter = 0;
 		tail = NULL;
 		holdKoopa = NULL;
@@ -261,6 +268,12 @@ public:
 	void handleHoldKoopa();
 	void tailAttack();
 	void calculatePowerMeter();
+	void setLuigi() {
+		 level = MARIO_LEVEL_FIRE;
+	}
+	void setMario() {
+		nx = -1;
+	}
 	int GetLevel() { return level; }
 	int GetPowerMeter() { return PowerMeter; }
 };

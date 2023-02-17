@@ -3,6 +3,7 @@
 
 #include "PlayScene.h"
 #include "Goomba.h"
+#include "AssetIDs.h"
 #include "QuestionBrick.h"
 #include "Brick.h"
 #include "Koopa.h"
@@ -46,7 +47,7 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		if (e->ny != 0)
 		{
 			vy = 0;
-			if(e->ny < 0 && isOverturned && state == KOOPA_STATE_SHELL)	vx = 0;
+			if(e->ny < 0 /*&& isOverturned*/ && state == KOOPA_STATE_SHELL)	vx = 0;
 			if ((e->ny < 0) && state == KOOPA_STATE_WALKING && type == 1)	isOnPlatform = true;
 		}
 		else if (e->nx != 0)
@@ -126,8 +127,10 @@ void CKoopa::OnCollisionWithPiranhaPlant(LPCOLLISIONEVENT e)
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	LPGAME game = CGame::GetInstance();
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->IsLevelChange())return;
+	if (game->getIDcurrentScene() == ID_PLAY_SCENE) {
+		CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+		if (mario->IsLevelChange())return;
+	}
 	vy += ay * dt;
 	vx += ax * dt;
 	

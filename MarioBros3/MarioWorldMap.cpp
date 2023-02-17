@@ -1,6 +1,6 @@
 #include <algorithm>
 #include "debug.h"
-
+#include "AssetIDs.h"
 #include "MarioWorldMap.h"
 #include "Game.h"
 
@@ -85,7 +85,7 @@ void MarioWorldMap::SetState(int state)
 
 void MarioWorldMap::StartPlayScene() {
 	if (state != MARIO_WORLD_STATE_IDLE) return;
-	if(door->GetType() == DOOR_TYPE_1) CGame::GetInstance()->InitiateSwitchScene(2);
+	if(door->GetType() == DOOR_TYPE_1) CGame::GetInstance()->InitiateSwitchScene(ID_PLAY_SCENE);
 }
 void MarioWorldMap::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {

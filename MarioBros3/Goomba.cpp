@@ -1,5 +1,5 @@
 #include "Goomba.h"
-
+#include "AssetIDs.h"
 #include "PlayScene.h"
 CGoomba::CGoomba(float x, float y, int type):CGameObject(x, y)
 {
@@ -55,8 +55,10 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	LPGAME game = CGame::GetInstance();
-	CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-	if (mario->IsLevelChange())return;
+	if (game->getIDcurrentScene() == ID_PLAY_SCENE) {
+		CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+		if (mario->IsLevelChange())return;
+	}
 	vy += ay * dt;
 	vx += ax * dt;
 
@@ -73,15 +75,20 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 void CGoomba::Render()
 {
-	int aniId = ID_ANI_GOOMBA_WALKING;
-	if (state == GOOMBA_STATE_DIE) 
+	int aniId;
+	if(vx==0)
+		aniId = ID_ANI_GOOMBA_IDLE;
+	else
+		aniId = ID_ANI_GOOMBA_WALKING;
+	if (state == GOOMBA_STATE_DIE)
 	{
 		aniId = ID_ANI_GOOMBA_DIE;
 	}
 	else if (state == GOOMBA_STATE_DIE_OVERTURNED)
 	{
 		aniId = ID_ANI_GOOMBA_OVERTURNED;
-	}
+	}		
+
 	if (type == 1) aniId += ID_ANI_GOOMBA_RED;
 	CAnimations::GetInstance()->Get(aniId)->Render(x,y);
 	//RenderBoundingBox();
@@ -106,6 +113,8 @@ void CGoomba::SetState(int state)
 			health = 0;
 			vx = 0;
 			vy -= GOOMBA_DIE_OVERTURNED_DEFLECT_Y;
+			break;
+		default:
 			break;
 	}
 }
