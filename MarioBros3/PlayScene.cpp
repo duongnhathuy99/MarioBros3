@@ -158,7 +158,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		int item = atoi(tokens[3].c_str());
 		obj = new CQuestionBrick(x, y, item); break; 
 	}
-	case OBJECT_TYPE_MUSHROOM: obj = new CMushroom(x, y); break;
+	case OBJECT_TYPE_MUSHROOM: {
+		int type = atoi(tokens[3].c_str());
+		obj = new CMushroom(x, y, type); break; 
+	}
 
 	case OBJECT_TYPE_PLATFORM:
 	{

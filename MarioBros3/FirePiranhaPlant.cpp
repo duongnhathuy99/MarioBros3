@@ -31,7 +31,7 @@ void CFirePiranhaPlant::Render()
 	if (state == STATE_PRIRANHA_STOP) ani += 4;
 	if (color == 1) ani += 8;
 	CAnimations::GetInstance()->Get(ani)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 void CFirePiranhaPlant::SetState(int state)
 {

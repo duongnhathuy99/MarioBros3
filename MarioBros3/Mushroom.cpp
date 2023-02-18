@@ -1,10 +1,11 @@
 #include "Mushroom.h"
-CMushroom::CMushroom(float x, float y) :CGameObject(x, y)
+CMushroom::CMushroom(float x, float y,int type) :CGameObject(x, y)
 {
 	this->ax = 0;
 	this->ay = MUSHROOM_GRAVITY;
 	SetState(MUSHROOM_STATE_WALKING);
 	startY = y;
+	this->type = type;
 }
 
 void CMushroom::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -53,7 +54,8 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void CMushroom::Render()
 {
 	int aniId = ID_ANI_MUSHROOM_WALKING;
-
+	if(type == TYPE_MUSHROOM_1UP )
+		aniId = ID_ANI_MUSHROOM_1UP_WALKING;
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	//RenderBoundingBox();
 }

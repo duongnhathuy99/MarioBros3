@@ -20,101 +20,14 @@
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	
 	vy += ay * dt;
 	vx += ax * dt;
-	//DebugOutTitle(L"vx:%f   vy:%f   nx:%d    state:%d", vx, vy, nx,state);
+	//DebugOutTitle(L"vx:%f   vy:%f   IsGoInPipe:%d    state:%d", vx, vy, isGoInPipe,state);
 	if (abs(vx) > abs(maxVx) && vx*maxVx > 0) vx = maxVx;
 	if (abs(vy) > maxVy && vy>0) vy = maxVy;
-	
-	// reset untouchable timer if untouchable time has passed
-	if ( GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME) 
-	{
-		untouchable_start = 0;	
-		isUntouchable = false;
-	}
-	// time level change mario idle
-	if (GetTickCount64() - levelChange_start > MARIO_LEVEL_CHANGE_TIME)
-	{
-		levelChange_start = 0;
-		isLevelChange = 0;
-	}
+	HandleTimeMario();
 	if (isLevelChange)return;
-	//time mario press P-Switches
-	if (GetTickCount64() - PSwitches_start > PSWITCHES_TIME)
-	{
-		PSwitches_start = 0;
-		isPSwitches = false;
-	}
-	//time mario kick
-	if (GetTickCount64() - kick_start > MARIO_KICK_TIME)
-	{
-		kick_start = 0;
-		isKick = false;
-	}
-	//time mario Topple
-	if (GetTickCount64() - Topple_time_start > MARIO_LOOK_UP_TIME)
-	{
-		Topple_time_start = 0;
-		isTopple = false;
-	}
-	//time mario slow fall
-	if (GetTickCount64() - slowFall_start < MARIO_TAIL_SLOW_FALL_TIME && !isOnPlatform)
-	{
-		vy = MARIO_SLOW_FALL_SPEED_Y;
-		ay = 0;
-		isSlowFall = true;
-	}
-	else 
-	{ 
-		ay = MARIO_GRAVITY;
-		isSlowFall = false;
-	}
-	//time mario fly
-	if (GetTickCount64() - fly_start > MARIO_FLY_TIME && isfly)
-	{
-		isfly = false;
-		PowerMeter = 0;
-	}
-	//mario go in pipe
-	if (isGoInPipe)
-	{
-		ay = 0;
-		int mario_bbox;
-		if (level != MARIO_LEVEL_SMALL)
-			mario_bbox = MARIO_BIG_BBOX_HEIGHT;
-		else
-			mario_bbox = MARIO_SMALL_BBOX_HEIGHT;
-		if (y - startY_GoInpipe > mario_bbox && state == MARIO_STATE_GO_IN_PIPE) {
-			if (!isInHiddenMap) {
-				if (level != MARIO_LEVEL_SMALL)
-					SetPosition(POSITION_GO_DOWN_PIPE_X, POSITION_GO_DOWN_PIPE_Y);
-				else
-					SetPosition(POSITION_GO_DOWN_PIPE_X, POSITION_GO_DOWN_PIPE_Y + (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2);
-				startY_GoInpipe = y;
-				isInHiddenMap = true;
-			}
-			else {
-				isGoInPipe = false;
-				startY_GoInpipe = 0;
-				ay = MARIO_GRAVITY;
-			}
-		}
-		if (startY_GoInpipe - y > mario_bbox && state == MARIO_STATE_GO_IN_PIPE) {
-			if (isInHiddenMap) {
-				if(level != MARIO_LEVEL_SMALL)
-					SetPosition(POSITION_GO_UP_PIPE_X, POSITION_GO_UP_PIPE_Y);
-				else
-					SetPosition(POSITION_GO_UP_PIPE_X, POSITION_GO_UP_PIPE_Y-(MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT)/2);
-				startY_GoInpipe = y;
-				isInHiddenMap = false;
-			}
-			else {
-				isGoInPipe = false;
-				startY_GoInpipe = 0;
-				ay = MARIO_GRAVITY;
-			}
-		}
-	}
 	calculatePowerMeter();
 	isCollisionWithPipe = 0;
 	isOnPlatform = false;
@@ -278,8 +191,12 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 }
 void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 {
-	e->obj->Delete();
-	SetLevel(MARIO_LEVEL_BIG);
+	CMushroom* mushroom = (CMushroom*)e->obj;
+	mushroom->Delete();
+	if (mushroom->GetType() == TYPE_MUSHROOM)
+		SetLevel(MARIO_LEVEL_BIG);
+	else
+		HUD::GetInstance()->SetHealth(1);
 }
 void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
@@ -624,6 +541,7 @@ void CMario::SetState(int state)
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
 		vx = 0;
 		ax = 0;
+		Die_time_start = GetTickCount64();
 		break;	
 	case MARIO_STATE_END_SCENE:
 		ax = 0;
@@ -824,6 +742,110 @@ void CMario::calculatePowerMeter()
 			{
 				powerMeter_start = GetTickCount64();
 				if (PowerMeter > 0)PowerMeter--;
+			}
+		}
+	}
+}
+
+void CMario::HandleTimeMario()
+{
+	//Check mario fall into the pit
+	 if(y > LIMITED_POSITION_Y && isInHiddenMap == 0 && state != MARIO_STATE_DIE)
+	 {
+		 SetState(MARIO_STATE_DIE);
+		 vy = 0;
+	 }
+	 //time mario die
+	 if (GetTickCount64() - Die_time_start > MARIO_DIE_TIME && state == MARIO_STATE_DIE)
+	 {
+		 HUD::GetInstance()->SetHealth(-1);
+		 CGame::GetInstance()->InitiateSwitchScene(ID_WORLD_SCENE);
+	 }
+	// reset untouchable timer if untouchable time has passed
+	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
+	{
+		untouchable_start = 0;
+		isUntouchable = false;
+	}
+	// time level change mario idle
+	if (GetTickCount64() - levelChange_start > MARIO_LEVEL_CHANGE_TIME)
+	{
+		levelChange_start = 0;
+		isLevelChange = 0;
+	}
+	//time mario press P-Switches
+	if (GetTickCount64() - PSwitches_start > PSWITCHES_TIME)
+	{
+		PSwitches_start = 0;
+		isPSwitches = false;
+	}
+	//time mario kick
+	if (GetTickCount64() - kick_start > MARIO_KICK_TIME)
+	{
+		kick_start = 0;
+		isKick = false;
+	}
+	//time mario Topple
+	if (GetTickCount64() - Topple_time_start > MARIO_LOOK_UP_TIME)
+	{
+		Topple_time_start = 0;
+		isTopple = false;
+	}
+	//time mario slow fall
+	if (GetTickCount64() - slowFall_start < MARIO_TAIL_SLOW_FALL_TIME && !isOnPlatform)
+	{
+		vy = MARIO_SLOW_FALL_SPEED_Y;
+		ay = 0;
+		isSlowFall = true;
+	}
+	else
+	{
+		ay = MARIO_GRAVITY;
+		isSlowFall = false;
+	}
+	//time mario fly
+	if (GetTickCount64() - fly_start > MARIO_FLY_TIME && isfly)
+	{
+		isfly = false;
+		PowerMeter = 0;
+	}
+	//mario go in pipe
+	if (isGoInPipe)
+	{
+		ay = 0;
+		int mario_bbox;
+		if (level != MARIO_LEVEL_SMALL)
+			mario_bbox = MARIO_BIG_BBOX_HEIGHT;
+		else
+			mario_bbox = MARIO_SMALL_BBOX_HEIGHT;
+		if (y - startY_GoInpipe > mario_bbox && state == MARIO_STATE_GO_IN_PIPE) {
+			if (!isInHiddenMap) {
+				if (level != MARIO_LEVEL_SMALL)
+					SetPosition(POSITION_GO_DOWN_PIPE_X, POSITION_GO_DOWN_PIPE_Y);
+				else
+					SetPosition(POSITION_GO_DOWN_PIPE_X, POSITION_GO_DOWN_PIPE_Y + (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2);
+				startY_GoInpipe = y;
+				isInHiddenMap = true;
+			}
+			else {
+				isGoInPipe = false;
+				startY_GoInpipe = 0;
+				ay = MARIO_GRAVITY;
+			}
+		}
+		if (startY_GoInpipe - y > mario_bbox && state == MARIO_STATE_GO_IN_PIPE) {
+			if (isInHiddenMap) {
+				if (level != MARIO_LEVEL_SMALL)
+					SetPosition(POSITION_GO_UP_PIPE_X, POSITION_GO_UP_PIPE_Y);
+				else
+					SetPosition(POSITION_GO_UP_PIPE_X, POSITION_GO_UP_PIPE_Y - (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2);
+				startY_GoInpipe = y;
+				isInHiddenMap = false;
+			}
+			else {
+				isGoInPipe = false;
+				startY_GoInpipe = 0;
+				ay = MARIO_GRAVITY;
 			}
 		}
 	}

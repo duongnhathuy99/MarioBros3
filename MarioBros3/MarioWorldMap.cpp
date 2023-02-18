@@ -6,7 +6,7 @@
 
 void MarioWorldMap::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	DebugOutTitle(L"x:%f   y:%f  value:%d  left:%d   top:%d   right:%d   bot:%d", x-8, y-8, door->GetType(), door->GetLeft(), door->GetTop(), door->GetRight(), door->GetBot());
+	//DebugOutTitle(L"x:%f   y:%f  value:%d  left:%d   top:%d   right:%d   bot:%d", x-8, y-8, door->GetType(), door->GetLeft(), door->GetTop(), door->GetRight(), door->GetBot());
 	if ( (abs(x_start - x) >= MARIO_WORLD_DISTANCE_CAN_GO || abs(y_start - y) >= MARIO_WORLD_DISTANCE_CAN_GO) && state != MARIO_WORLD_STATE_IDLE)
 	{
 		if (vx != 0)
@@ -45,7 +45,7 @@ void MarioWorldMap::Render()
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = ID_ANI_MARIO_WORLD_SMALL;
 	animations->Get(aniId)->Render(x - MARIO_WORLD_BBOX_WIDTH_ADJUST, y - MARIO_WORLD_BBOX_HEIGHT_ADJUST);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void MarioWorldMap::SetState(int state)

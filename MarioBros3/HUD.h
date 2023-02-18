@@ -1,6 +1,7 @@
 #pragma once
 #include "PlayScene.h"
 
+#define ID_WORLD_SCENE 1
 #define ID_SPRITE_HUD_BOARD 65000
 #define ID_SPRITE_HUD_BACKGROUND 65001
 
@@ -18,12 +19,17 @@
 #define ID_SPRITE_POWER 65020
 #define ID_SPRITE_POWER_P 65021
 
-//#define ID_SPRITE_END_SCENE 65022
+#define ID_SPRITE_END_SCENE 65022
 #define ID_SPRITE_MUSHROOM 65023
 #define ID_SPRITE_FIRE_FLOWER 65024
 #define ID_SPRITE_STAR 65025
 
 #define DISTANCE_HUD_HEIGHT 24
+#define TIME_START_PLAYSCENE 300
+#define MILI_1000_SECOND 1000
+#define POINT_50 50
+#define MAP_HORIZONTAL_LIMIT 2800
+
 class HUD
 {
 	static HUD* __instance;
@@ -47,7 +53,7 @@ public:
 	void DrawItem(int item, float x, float y);
 	void Get1Coin() { this->coin++; }
 	void SetPoint(int point) { this->point = point; }
-	void SetHealth(int health) { this->health = health; }
+	void SetHealth(int health) { this->health += health; }
 	void SetTime(int time) { this->time = time; }
 	void TimeStart() { this->Playing_time_start = GetTickCount64(); }
 	void SetItemMenu(int item) { 

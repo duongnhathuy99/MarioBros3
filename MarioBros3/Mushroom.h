@@ -11,6 +11,10 @@
 
 //#define SPEED_MUSHROOM 0.0002f
 #define ID_ANI_MUSHROOM_WALKING 7004
+#define ID_ANI_MUSHROOM_1UP_WALKING 7014
+
+#define TYPE_MUSHROOM 1
+#define TYPE_MUSHROOM_1UP 2
 
 class CMushroom : public CGameObject
 {
@@ -18,6 +22,7 @@ protected:
 	float ax;
 	float ay;
 	float startY;
+	int type;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -30,7 +35,8 @@ protected:
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 
 public:
-	CMushroom(float x, float y);
+	CMushroom(float x, float y, int type);
 	virtual void SetState(int state);
+	int GetType() { return type; }
 };
 

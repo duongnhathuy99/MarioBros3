@@ -86,7 +86,7 @@ void CPiranhaPlant::Render()
 	CAnimations::GetInstance()->Get(ID_ANI_STEM)->Render(x, y+i*STEM_BBOX_HEIGHT+ STEM_BBOX_HEIGHT/2);
 	CAnimations::GetInstance()->Get(ani)->Render(x, y);
 	
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CPiranhaPlant::SetState(int state)

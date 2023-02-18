@@ -125,6 +125,9 @@
 #define POSITION_GO_UP_PIPE_X		2334.0f
 #define POSITION_GO_UP_PIPE_Y		394.0f
 
+#define POWER_METER_MAX 7
+#define LIMITED_POSITION_Y 448
+
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
 #define	MARIO_LEVEL_FIRE		3
@@ -153,6 +156,7 @@
 #define MARIO_LEVEL_CHANGE_TIME	600
 #define MARIO_TOPPLE_TIME 500
 #define MARIO_LOOK_UP_TIME 1600
+#define MARIO_DIE_TIME 2000
 
 #pragma endregion
 
@@ -178,6 +182,7 @@ class CMario : public CGameObject
 	ULONGLONG levelChange_start;
 	ULONGLONG Playing_time_start;
 	ULONGLONG Topple_time_start;
+	ULONGLONG Die_time_start;
 	BOOLEAN isOnPlatform;
 	int isCollisionWithPipe;
 	int isInHiddenMap;
@@ -196,7 +201,7 @@ class CMario : public CGameObject
 	void OnCollisionWithPipe(LPCOLLISIONEVENT e);
 	void OnCollisionWithItemsMenu(LPCOLLISIONEVENT e);
 	int GetAniId();
-
+	void HandleTimeMario();
 public:
 	CMario(float x, float y) : CGameObject(x, y)
 	{
@@ -230,6 +235,7 @@ public:
 		levelChange_start = -1;
 		Playing_time_start = GetTickCount64();
 		Topple_time_start = -1;
+		Die_time_start = -1;
 		PowerMeter = 0;
 		tail = NULL;
 		holdKoopa = NULL;
@@ -261,7 +267,7 @@ public:
 	BOOLEAN IsLevelChange() { return isLevelChange; }
 	BOOLEAN IsFlying() { return isfly; }
 	BOOLEAN IsAbleFly() {
-		if (level == MARIO_LEVEL_RACCOON) return PowerMeter == 7; else return false; }
+		if (level == MARIO_LEVEL_RACCOON) return PowerMeter == POWER_METER_MAX; else return false; }
 	BOOLEAN IsAbleGoDown() {
 		return isCollisionWithPipe == -1;
 	}

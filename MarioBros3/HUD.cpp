@@ -2,6 +2,8 @@
 #include "ItemsMenu.h"
 #include "Sprite.h"
 #include "Sprites.h"
+#include "AssetIDs.h"
+
 HUD* HUD::__instance = NULL;
 
 void HUD::Render() {
@@ -18,10 +20,26 @@ void HUD::Render() {
 
 	if (dynamic_cast<CMario*>(((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer()))
 	{
-		time = 300 - INT((GetTickCount64() - Playing_time_start) / 1000);
+		time = TIME_START_PLAYSCENE - INT((GetTickCount64() - Playing_time_start) / MILI_1000_SECOND);
 		//POWER METERs
 		CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+		float mario_x, mario_y;
+		mario->GetPosition(mario_x, mario_y);
 		DrawPowerMeter(mario->GetPowerMeter(), cx - 60, cy - 3);
+		if (mario->GetState() == MARIO_STATE_END_SCENE && mario_x > MAP_HORIZONTAL_LIMIT) {
+			s->Get(ID_SPRITE_END_SCENE)->Draw(cx, cy - 170);
+			int item;
+			if (item3) item = item3;
+			else if (item2) item = item2;
+			else item = item1;
+			DrawItem(item, cx + 62, cy - 162);
+			if (time > 0) {
+				Playing_time_start -= MILI_1000_SECOND;
+				point += POINT_50;
+			}
+			else
+				game->InitiateSwitchScene(ID_WORLD_SCENE);
+		}
 	}
 	//COIN
 	DrawNumber(coin / 10, cx + 20, cy - 3);

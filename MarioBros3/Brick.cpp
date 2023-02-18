@@ -1,6 +1,6 @@
 #include "Brick.h"
 #include "PSwitches.h"
-
+#include "Mushroom.h"
 #include "PlayScene.h"
 
 void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {
@@ -40,6 +40,11 @@ void CBrick::SetState(int state) {
 		if (item == 1) {
 			PSwitches* switches = new PSwitches(x, y - 16);
 			scene->AddObject(switches);
+		}
+		else if (item == 2) {
+			CMushroom* mushroom = new CMushroom(x, y, TYPE_MUSHROOM_1UP);
+			mushroom->SetState(MUSHROOM_STATE_GROWUP);
+			scene->AddObject(mushroom);
 		}
 		else Delete();
 	break; 

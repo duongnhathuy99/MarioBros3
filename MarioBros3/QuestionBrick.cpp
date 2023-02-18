@@ -49,7 +49,7 @@ void CQuestionBrick::SetState(int state) {
 		break;
 	case QUESTION_BRICK_STATE_UNBOX:
 		if (item == ITEM_LEVEL_UP && mario->GetLevel() == MARIO_LEVEL_SMALL) {
-			CMushroom* mushroom = new CMushroom(x, y );
+			CMushroom* mushroom = new CMushroom(x, y ,TYPE_MUSHROOM);
 			mushroom->SetState(MUSHROOM_STATE_GROWUP);
 			scene->AddObject(mushroom);
 		}

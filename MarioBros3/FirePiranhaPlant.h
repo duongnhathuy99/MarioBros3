@@ -7,7 +7,7 @@
 #define ID_ANI_PRIRANHA_GREEN_UP_RIGHT 7306
 class CFirePiranhaPlant :public CPiranhaPlant
 {
-	BOOLEAN isfire;
+	BOOLEAN isfire=false;
 	void Render();
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void ShootFireball();

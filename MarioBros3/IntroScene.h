@@ -81,7 +81,7 @@ class CIntroScene : public CScene
 	CObjectWorldMap* treeLeft = new CObjectWorldMap(32, 140, 0, 0, OBJECT_INTRO_TREE_LEFT);
 	CObjectWorldMap* treeRight = new CObjectWorldMap(224, 140, 0, 0, OBJECT_INTRO_TREE_RIGHT);
 	CObjectWorldMap* bg_intro = new CObjectWorldMap(128, 120, 0, 0, OBJECT_INTRO_BACKGROUND);
-	CMushroom* mushroom = new CMushroom(48,0);
+	CMushroom* mushroom = new CMushroom(48,0,TYPE_MUSHROOM);
 	CGoomba* goomba = new CGoomba(75, 0,0);
 	CLeaf* leaf = new CLeaf(112, 0);
 	CKoopa* koopa = new CKoopa(120, 0, 0);
