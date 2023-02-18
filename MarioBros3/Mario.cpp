@@ -28,12 +28,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (abs(vy) > maxVy && vy>0) vy = maxVy;
 	HandleTimeMario();
 	if (isLevelChange)return;
+	if (y > POSITION_CAM_Y)CamYMario = false;
+	else if(isfly)CamYMario = true;
 	calculatePowerMeter();
 	isCollisionWithPipe = 0;
 	isOnPlatform = false;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	handleTail(dt);
 	handleHoldKoopa();
+	if (x < TILE_BBOX)x = TILE_BBOX;
 }
 
 void CMario::OnNoCollision(DWORD dt)

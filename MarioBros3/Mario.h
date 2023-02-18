@@ -127,6 +127,8 @@
 
 #define POWER_METER_MAX 7
 #define LIMITED_POSITION_Y 448
+#define POSITION_CAM_Y 368
+#define TILE_BBOX 16
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
@@ -163,7 +165,7 @@
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting, isGoInPipe;
-	BOOLEAN isKick, ishold, isAttack, isfly, isPSwitches, isUntouchable, isSlowFall, isTopple;
+	BOOLEAN isKick, ishold, isAttack, isfly, isPSwitches, isUntouchable, isSlowFall, isTopple, CamYMario;
 	int isLevelChange;
 	float maxVx, maxVy;
 	float ax;				// acceleration on x 
@@ -215,6 +217,7 @@ public:
 		isfly = false;
 		isSlowFall = false;
 		isPSwitches = false;
+		CamYMario = false;
 		isUntouchable = false;
 		isTopple = false;
 		isLevelChange = 0;
@@ -239,6 +242,7 @@ public:
 		PowerMeter = 0;
 		tail = NULL;
 		holdKoopa = NULL;
+		if (y < POSITION_CAM_Y)CamYMario = true;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -274,6 +278,9 @@ public:
 	BOOLEAN IsAbleGoUp() {
 		return isCollisionWithPipe == 1;
 	}
+	BOOLEAN IsCamYMario() {
+		return CamYMario;
+	}
 	void handleTail(DWORD dt);
 	void handleHoldKoopa();
 	void tailAttack();
@@ -287,4 +294,5 @@ public:
 	void setAccel() { ax = 0; }
 	int GetLevel() { return level; }
 	int GetPowerMeter() { return PowerMeter; }
+
 };

@@ -344,15 +344,21 @@ void CPlayScene::Update(DWORD dt)
 	CGame *game = CGame::GetInstance();
 	cx -= game->GetBackBufferWidth() / 2;
 	//if (mario->IsFlying() || cy - game->GetBackBufferHeight() / 2 < 240)
-		cy -= game->GetBackBufferHeight() / 2;
 	
-	if (cx < 0) cx = 0;
-	if (cy < 0) cy = 0;
-	if (cx > 2544) cx = 2544;
-	if (cy > 240) cy = 240;
+	if(mario->IsCamYMario())
+		cy -= game->GetBackBufferHeight() / 2;
+	else
+		cy = 240;
 	if (mario->IsInHiddenMap()) {
 		//cx = 2096;
 		cy = 464;
+	}
+	else
+	{
+		if (cx < 0) cx = 0;
+		if (cy < 0) cy = 0;
+		if (cx > 2544) cx = 2544;
+		if (cy > 240) cy = 240;
 	}
 	CGame::GetInstance()->SetCamPos(cx, cy);
 

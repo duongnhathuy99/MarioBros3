@@ -9,6 +9,7 @@
 #include "Koopa.h"
 #include "BlackKoopa.h"
 #include "PiranhaPlant.h"
+#include "SemisolidPlatform.h"
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
@@ -31,11 +32,11 @@ void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom
 void CKoopa::OnNoCollision(DWORD dt)
 {
 	if (state == KOOPA_STATE_HELD_BY)return;
-	if (state == KOOPA_STATE_WALKING && isOnPlatform)
+	/*if (state == KOOPA_STATE_WALKING && isOnPlatform)
 	{
 		vy = 0;
 		vx = -vx;
-	}
+	}*/
 	x += vx * dt;
 	y += vy * dt;
 	isOnPlatform = false;
@@ -54,6 +55,24 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		else if (e->nx != 0)
 		{
 			vx = -vx;
+		}
+		if (dynamic_cast<CSemisolidPlatform*>(e->obj)|| dynamic_cast<CBrick*>(e->obj))
+		{
+			if ((e->ny < 0) && state == KOOPA_STATE_WALKING)
+			{
+				float l, t, r, b;
+				e->obj->GetBoundingBox(l, t, r, b);
+				if (x < l)
+				{
+					x = l;
+					vx = -vx;
+				}
+				if (x > r)
+				{
+					x = r;
+					vx = -vx;
+				}
+			}
 		}
 	}
 	if (dynamic_cast<CGoomba*>(e->obj))
