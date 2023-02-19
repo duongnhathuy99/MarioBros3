@@ -164,7 +164,7 @@
 
 class CMario : public CGameObject
 {
-	BOOLEAN isSitting, isGoInPipe;
+	BOOLEAN isSitting, isGoInPipe, isIntro;
 	BOOLEAN isKick, ishold, isAttack, isfly, isPSwitches, isUntouchable, isSlowFall, isTopple, CamYMario;
 	int isLevelChange;
 	float maxVx, maxVy;
@@ -207,6 +207,7 @@ class CMario : public CGameObject
 public:
 	CMario(float x, float y) : CGameObject(x, y)
 	{
+		isIntro = false;
 		isGoInPipe = false;
 		isOnPlatform = false;
 		isInHiddenMap = 0;
@@ -253,7 +254,7 @@ public:
 		return (state != MARIO_STATE_DIE); 
 	}
 
-	int IsBlocking() { return (state != MARIO_STATE_DIE && !isUntouchable); }
+	int IsBlocking() { return (state != MARIO_STATE_DIE && !isUntouchable &&!isIntro); }
 
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
@@ -286,9 +287,11 @@ public:
 	void tailAttack();
 	void calculatePowerMeter();
 	void setLuigi() {
+		isIntro = true;
 		 level = MARIO_LEVEL_FIRE;
 	}
 	void setDirectionMario(int direct) {
+		isIntro = true;
 		nx = direct;
 	}
 	void setAccel() { ax = 0; }

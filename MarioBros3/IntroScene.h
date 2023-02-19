@@ -55,7 +55,7 @@
 #define TIME_MILESTONE_16 21400
 #define TIME_MILESTONE_17 23400
 #define TIME_MILESTONE_18 23400
-#define TIME_MILESTONE_19 23400
+#define TIME_MILESTONE_19 25000
 
 class CIntroScene : public CScene
 {
@@ -81,6 +81,7 @@ class CIntroScene : public CScene
 	CObjectWorldMap* treeLeft = new CObjectWorldMap(32, 140, 0, 0, OBJECT_INTRO_TREE_LEFT);
 	CObjectWorldMap* treeRight = new CObjectWorldMap(224, 140, 0, 0, OBJECT_INTRO_TREE_RIGHT);
 	CObjectWorldMap* bg_intro = new CObjectWorldMap(128, 120, 0, 0, OBJECT_INTRO_BACKGROUND);
+	CObjectWorldMap* select_player = new CObjectWorldMap(128, 140, 0, 0, OBJECT_INTRO_1PLAYER);
 	CMushroom* mushroom = new CMushroom(48,0,TYPE_MUSHROOM);
 	CGoomba* goomba = new CGoomba(75, 0,0);
 	CLeaf* leaf = new CLeaf(112, 0);
@@ -95,6 +96,7 @@ public:
 	virtual void Update(DWORD dt);
 	virtual void Render();
 	virtual void Unload();
+	void Select_player(int player) { select_player->SetType(player); }
 	void scriptIntro()
 	{
 		ULONGLONG time_now = GetTickCount64() - time_intro_start;
@@ -239,6 +241,11 @@ public:
 				AddTailObject(treeRight);
 				milestone++;
 			}
+		}
+		else if (time_now > TIME_MILESTONE_19 && milestone == MILESTONE_19)
+		{
+			AddTailObject(select_player);
+			milestone++;
 		}
 	}
 	LPGAMEOBJECT GetPlayer() { return player; }

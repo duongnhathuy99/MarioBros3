@@ -3,17 +3,24 @@
 #include "debug.h"
 #include "Game.h"
 #include "AssetIDs.h"
+#include "ObjectWorldMap.h"
 #include "IntroScene.h"
 
 void CIntroSceneKeyEventHandler::OnKeyDown(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
-	//MarioWorldMap* marioWorld = (MarioWorldMap*)((LPWORLDSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+	CIntroScene* intro = ((LPINTROSCENE)CGame::GetInstance()->GetCurrentScene());
 
 	switch (KeyCode)
 	{
 	case DIK_W:
 		CGame::GetInstance()->InitiateSwitchScene(ID_WORLD_SCENE);
+		break;
+	case DIK_UP:
+		intro->Select_player(OBJECT_INTRO_1PLAYER);
+		break;
+	case DIK_DOWN:
+		intro->Select_player(OBJECT_INTRO_2PLAYER);
 		break;
 	}
 }

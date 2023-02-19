@@ -15,11 +15,11 @@ Assets\HUB.txt
 # See OBJECT_TYPE constants in AssetIDs.h
 
 # MARIO
-#0	100	240
+#	100	240
 #0	1556	90
 #0	2256	90
 
-0	2220	350
+0	1320	350
 #0	2556	90
 
 #COIN

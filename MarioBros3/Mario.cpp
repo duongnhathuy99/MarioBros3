@@ -36,7 +36,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	handleTail(dt);
 	handleHoldKoopa();
-	if (x < TILE_BBOX)x = TILE_BBOX;
+	if (x < TILE_BBOX &&!isIntro)x = TILE_BBOX;
 }
 
 void CMario::OnNoCollision(DWORD dt)
@@ -753,13 +753,13 @@ void CMario::calculatePowerMeter()
 void CMario::HandleTimeMario()
 {
 	//Check mario fall into the pit
-	 if(y > LIMITED_POSITION_Y && isInHiddenMap == 0 && state != MARIO_STATE_DIE)
+	 if(y > LIMITED_POSITION_Y && isInHiddenMap == 0 && state != MARIO_STATE_DIE && !isIntro)
 	 {
 		 SetState(MARIO_STATE_DIE);
 		 vy = 0;
 	 }
 	 //time mario die
-	 if (GetTickCount64() - Die_time_start > MARIO_DIE_TIME && state == MARIO_STATE_DIE)
+	 if (GetTickCount64() - Die_time_start > MARIO_DIE_TIME && state == MARIO_STATE_DIE && !isIntro)
 	 {
 		 HUD::GetInstance()->SetHealth(-1);
 		 CGame::GetInstance()->InitiateSwitchScene(ID_WORLD_SCENE);

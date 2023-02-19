@@ -70,6 +70,12 @@ void CObjectWorldMap::Render()
 	case OBJECT_INTRO_BACKGROUND:
 		spriteId = ID_SPRITE_INTRO_BACKGROUND;
 		break;
+	case OBJECT_INTRO_1PLAYER:
+		spriteId = ID_SPRITE_INTRO_1PLAYER;
+		break;
+	case OBJECT_INTRO_2PLAYER:
+		spriteId = ID_SPRITE_INTRO_2PLAYER;
+		break;
 	}
 	if(spriteId)
 		sprite->Get(spriteId)->Draw(x, y);
